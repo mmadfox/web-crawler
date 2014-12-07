@@ -18,7 +18,7 @@
     },
 
     "autoload": {
-        "psr-0": { "Madfox\\WebCrawler\\": "" }
+        "psr-0": { "Madfox\\WebCrawler\\": "./" }
     },
 
     "target-dir" : "Madfox/WebCrawler"
