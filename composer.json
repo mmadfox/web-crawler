@@ -1,0 +1,17 @@
+{
+    "name": "mmadfox/web-crawler",
+    "description": "Search the web",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Liskonog",
+            "email": "sergey.liskonog@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "kriswallsmith/buzz": "dev-master",
+        "symfony/routing": "3.0.*@dev"
+    }
+}
