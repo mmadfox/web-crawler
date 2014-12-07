@@ -9,9 +9,16 @@
             "email": "sergey.liskonog@gmail.com"
         }
     ],
+
     "require": {
         "php": ">=5.3.3",
         "kriswallsmith/buzz": "dev-master",
         "symfony/routing": "3.0.*@dev"
-    }
+    },
+
+    "autoload": {
+        "psr-0": { "Madfox\\WebCrawler\\": "" }
+    },
+
+    "target-dir" : "Madfox/WebCrawler"
 }
