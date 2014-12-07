@@ -1,5 +1,6 @@
 {
     "name": "mmadfox/web-crawler",
+    "type": "library",
     "description": "Search the web",
     "minimum-stability": "stable",
     "license": "MIT",
