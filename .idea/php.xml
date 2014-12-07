@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpProjectSharedConfiguration" php_language_level="5.6.0" />
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings />
+      <phpunit_by_interpreter interpreter_id="a189dad8-85da-49b8-b0f0-02532a343376" interpreter_name="Remote PHP 5.5 foodbook.gur" custom_loader_path="" phpunit_phar_path="" />
+    </phpunit_settings>
+  </component>
+</project>
+
