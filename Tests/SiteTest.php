@@ -1,10 +1,12 @@
 <?php
+
+use Madfox\WebCrawler\Site\Address;
+
 class SiteTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateNewSite()
     {
-        $site = new \Madfox\WebCrawler\Site("");
-        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Site", $site);
+          new \Buzz\Util\Url("/");
     }
 }
  
