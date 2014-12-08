@@ -20,5 +20,18 @@ class SiteTest extends PHPUnit_Framework_TestCase
         $address = $this->site->getAddress();
         $this->assertInstanceOf("Madfox\\WebCrawler\\Site\\AddressInterface", $address);
     }
+
+    public function testPresets()
+    {
+        $this->site->presets();
+    }
+
+    public function testConfiguration()
+    {
+        $this->site->conf([]);
+        $this->site->conf([
+            'test' => 1
+        ]);
+    }
 }
  
