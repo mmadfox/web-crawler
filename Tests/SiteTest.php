@@ -23,7 +23,8 @@ class SiteTest extends PHPUnit_Framework_TestCase
 
     public function testPresets()
     {
-        $this->site->presets();
+        $presets = $this->getMockBuilder('Madfox\Presets\PresetsInterface')->setMethods(['install'])->getMock();
+        $this->site->presets('preset1', $presets);
     }
 
     public function testConfiguration()

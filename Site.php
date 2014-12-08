@@ -3,6 +3,7 @@ namespace Madfox\WebCrawler;
 
 use Madfox\Presets\PresetsInterface;
 use Madfox\WebCrawler\Site\AddressInterface;
+use Madfox\WebCrawler\Presets\PresetsCollection;
 
 class Site
 {
@@ -11,13 +12,17 @@ class Site
      */
     private $address;
     /**
-     * @var array
+     * @var PresetsCollection
      */
-    private $presets = [];
+    private $presetsCollection;
 
-    public function __construct(AddressInterface $address)
+    public function __construct(AddressInterface $address, PresetsCollection $presetsCollection = null)
     {
         $this->address = $address;
+        $this->presetsCollection = $presetsCollection
+                                 ? $presetsCollection
+                                 : new PresetsCollection();
+
     }
 
     /**
@@ -35,7 +40,9 @@ class Site
 
     public function presets($name, PresetsInterface $presets)
     {
-        $presets->setup($this);
+        $presets->install($this);
+        $this->presets[$name] = $presets;
+        return $this;
     }
 
     public function url($route)
@@ -43,8 +50,23 @@ class Site
 
     }
 
+    public function ifpath($route)
+    {
+        return $this->url($route);
+    }
+
     public function match()
     {
 
+    }
+
+    public function install()
+    {
+        $this->presetsCollection->install($this);
+    }
+
+    public function uninstall()
+    {
+        $this->presetsCollection->uninstall($this);
     }
 }

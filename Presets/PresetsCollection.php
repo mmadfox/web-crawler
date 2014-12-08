@@ -1,13 +1,44 @@
 <?php
 namespace Madfox\WebCrawler\Presets;
 
+use Madfox\Presets\PresetsInterface;
 use Madfox\WebCrawler\Site;
 
-class PresetsCollection
+class PresetsCollection implements \IteratorAggregate, \Countable
 {
-    public function add()
+    /**
+     * @var array
+     */
+    private $presets = [];
+
+    public function add($name, PresetsInterface $preset)
     {
 
+    }
+
+    public function remove($name)
+    {
+
+    }
+
+    public function removeAll()
+    {
+
+    }
+
+    public function all()
+    {
+
+    }
+
+    public function get($name)
+    {
+
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->presets);
     }
 
     public function install(Site $site)
@@ -18,5 +49,13 @@ class PresetsCollection
     public function uninstall(Site $site)
     {
 
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->presets);
     }
 }
