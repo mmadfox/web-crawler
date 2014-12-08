@@ -16,10 +16,9 @@ $application->site("http:://google.com")
             });
 
 $application->site("http://foodbook.guru")
-            ->ifpath("/recipes/{slug}/{id}")
-            ->exec(function($page) {
-
-            });
+            ->ifpath("/recipes/{slug}/{id}")->exec(function($page) {});
+            ->ifpath("/category/{id}/reviews.html")->exec(function($page) {})
+            ->ifpath("/category/{slug}/foo/bar/{id}")->exec(function($page){})
 
 $application->run();
 ```
