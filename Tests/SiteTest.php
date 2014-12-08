@@ -27,12 +27,15 @@ class SiteTest extends PHPUnit_Framework_TestCase
         $this->site->presets('preset1', $presets);
     }
 
-    public function testConfiguration()
+    public function testAddRoute()
     {
-        $this->site->conf([]);
-        $this->site->conf([
-            'test' => 1
-        ]);
+        $this->site->ifpath("/home/{id}/test/{slug}")->exec(function () { echo 1; });
+        $this->site->ifpath("/home/{id}/test/{slug}")->exec(function () { echo 1; });
+        $this->site->ifpath("/home/{id}/test/{slug}")->exec(function () { echo 1; });
+        $this->site->ifpath("/home/{id}/test/{slug}")->exec(function () { echo 1; });
+
+        $this->site->match(new \Buzz\Util\Url("werwer"));
     }
+
 }
  

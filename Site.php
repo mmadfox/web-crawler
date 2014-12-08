@@ -1,7 +1,10 @@
 <?php
 namespace Madfox\WebCrawler;
 
+use Buzz\Util\Url;
 use Madfox\Presets\PresetsInterface;
+use Madfox\WebCrawler\Routing\Route;
+use Madfox\WebCrawler\Routing\RouteCollection;
 use Madfox\WebCrawler\Site\AddressInterface;
 use Madfox\WebCrawler\Presets\PresetsCollection;
 
@@ -15,14 +18,13 @@ class Site
      * @var PresetsCollection
      */
     private $presetsCollection;
+    private $routeCollection;
 
-    public function __construct(AddressInterface $address, PresetsCollection $presetsCollection = null)
+    public function __construct(AddressInterface $address)
     {
         $this->address = $address;
-        $this->presetsCollection = $presetsCollection
-                                 ? $presetsCollection
-                                 : new PresetsCollection();
-
+        $this->presetsCollection = new PresetsCollection();
+        $this->routeCollection = new RouteCollection();
     }
 
     /**
@@ -45,17 +47,25 @@ class Site
         return $this;
     }
 
-    public function url($route)
+    public function addRoute(Route $route)
     {
-
+        return $route;
     }
 
-    public function ifpath($route)
+    public function ifpath($pathinfo)
     {
-        return $this->url($route);
+        if (!$pathinfo instanceof Route) {
+            $pathinfo = (string) $pathinfo;
+        }
+
+        $routeName = md5($pathinfo);
+        $route = new Route($pathinfo);
+        $this->routeCollection->add($routeName, $route);
+
+        return $route;
     }
 
-    public function match()
+    public function match(Url $url)
     {
 
     }
