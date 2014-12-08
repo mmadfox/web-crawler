@@ -10,13 +10,13 @@ $application = Crawler::create();
 
 $application->site("http:://google.com")
             ->conf([])
-            ->url("/")
+            ->ifpath("/")
             ->exec(function($page) {
 
             });
 
 $application->site("http://foodbook.guru")
-            ->url("/recipes/{slug}/{id}")
+            ->ifpath("/recipes/{slug}/{id}")
             ->exec(function($page) {
 
             });
