@@ -35,6 +35,7 @@ class Site
 
     public function ifpath($pathinfo)
     {
+        return new Route($pathinfo);
     }
 
     public function match()
