@@ -19,6 +19,7 @@ class Crawler
 
     public function site($site)
     {
+        var_dump(function_exists('msg_remove_queue'));
         $siteFactory = new SiteFactory();
         $site = $siteFactory->create($site);
 
