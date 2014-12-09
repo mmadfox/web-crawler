@@ -11,44 +11,28 @@ use Madfox\WebCrawler\Presets\PresetsCollection;
 class Site
 {
     private $address;
-    private $presetsCollection;
-    private $routeCollection;
+    private $routes = [];
 
     public function __construct(AddressInterface $address)
     {
         $this->address = $address;
-        $this->presetsCollection = new PresetsCollection();
-        $this->routeCollection = new RouteCollection();
     }
 
-    /**
-     * @return AddressInterface
-     */
     public function getAddress()
     {
         return $this->address;
     }
 
-    public function presets($name, PresetsInterface $presets)
-    {
-    }
-
     public function ifpath($pathinfo)
     {
-        return new Route($pathinfo);
+        $route = new Route($pathinfo);
+        $route->setSite($this);
+        array_push($this->routes, $route);
+        return $route;
     }
 
-    public function match()
+    public function routes()
     {
-
-    }
-
-    public function install()
-    {
-    }
-
-    public function uninstall()
-    {
-
+        return $this->routes;
     }
 }

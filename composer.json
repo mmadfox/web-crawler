@@ -14,7 +14,8 @@
     "require": {
         "php": ">=5.3.3",
         "kriswallsmith/buzz": "dev-master",
-        "symfony/routing": "3.0.*@dev"
+        "symfony/routing": "3.0.*@dev",
+        "symfony/console": "3.0.*@dev"
     },
 
     "autoload": {

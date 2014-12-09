@@ -58,14 +58,13 @@ class Address implements AddressInterface
         return $this->url->getPath();
     }
 
-    public function toString()
+    public function getHost()
     {
         $s = $this->getScheme();
         $h = $this->getHostname();
         $p = $this->getPort();
         $u = $this->getUser();
         $x = $this->getPassword();
-        $q = $this->getPath();
 
         $url = $s . "://";
 
@@ -80,6 +79,14 @@ class Address implements AddressInterface
         if (!empty($p)) {
             $url .= ":" . $p;
         }
+
+        return $url;
+    }
+
+    public function toString()
+    {
+        $url = $this->getHost();
+        $q = $this->getPath();
 
         if (!empty($q)) {
             $url .= $q;
