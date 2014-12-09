@@ -10,16 +10,29 @@ use Madfox\WebCrawler\Site\Address;
 use Madfox\WebCrawler\Site\Site;
 use Madfox\WebCrawler\Site\SiteFactory;
 use Buzz\Browser;
+use Madfox\WebCrawler\Validator\Constraints\Visit as VisitConstraint;
+use Madfox\WebCrawler\Validator\ValidatorFactory;
 
 class Crawler
 {
     private $sites = [];
     private $queue = [];
     private $history = [];
+    private $validator;
+
+    public function __construct()
+    {
+        $validatorFactory = new ValidatorFactory();
+        $this->validator = $validatorFactory->createValidator();
+    }
+
+    public function validator()
+    {
+        return $this->validator;
+    }
 
     public function site($site)
     {
-        var_dump(function_exists('msg_remove_queue'));
         $siteFactory = new SiteFactory();
         $site = $siteFactory->create($site);
 
@@ -38,6 +51,12 @@ class Crawler
 
     }
 
+    protected function assertUrlIsVisited($url)
+    {
+        return $this->validator()
+                    ->validate($url, new VisitConstraint($this->history));
+    }
+
     public function run()
     {
         $client = new Browser(new Curl());
@@ -51,9 +70,13 @@ class Crawler
             $u = array_shift($this->queue);
             echo "--- get item from queue \n";
 
-            if (isset($this->history[$u])) {
+            if ($this->assertUrlIsVisited($u)) {
                 continue;
             }
+
+            /*if (isset($this->history[$u])) {
+
+            }*/
 
             echo " ==== GET URL {$u} ==== \n";
 

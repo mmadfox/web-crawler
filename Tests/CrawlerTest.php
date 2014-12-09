@@ -42,7 +42,7 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
     public function testRun()
     {
         $this->crawler->site("http://ulkotours.com/");
-        $this->crawler->run();
+        $this->crawler->isRunning();
     }
 }
  
