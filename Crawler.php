@@ -10,7 +10,8 @@ use Madfox\WebCrawler\Site\Address;
 use Madfox\WebCrawler\Site\Site;
 use Madfox\WebCrawler\Site\SiteFactory;
 use Buzz\Browser;
-use Madfox\WebCrawler\Validator\Constraints\Visit as VisitConstraint;
+use Madfox\WebCrawler\Validator\Constraints\LinkIsNotVisited;
+use Madfox\WebCrawler\Validator\Constraints\ResponseHeader;
 use Madfox\WebCrawler\Validator\ValidatorFactory;
 
 class Crawler
@@ -51,10 +52,20 @@ class Crawler
 
     }
 
-    protected function assertUrlIsVisited($url)
+    protected function assertLinkIsNotVisited($url)
     {
-        return $this->validator()
-                    ->validate($url, new VisitConstraint($this->history));
+        $errors = $this->validator()
+                    ->validate($url, new LinkIsNotVisited($this->history));
+
+        return count($errors) != 0;
+    }
+
+    protected function assertResponseHeader($response)
+    {
+        $errors = $this->validator()
+                     ->validate($response, new ResponseHeader());
+
+        return count($errors) == 0;
     }
 
     public function run()
@@ -68,9 +79,9 @@ class Crawler
             echo "Start loop... \n";
 
             $u = array_shift($this->queue);
-            echo "--- get item from queue \n";
+            echo "--- get item from queue {$u} \n";
 
-            if ($this->assertUrlIsVisited($u)) {
+            if ($this->assertLinkIsNotVisited($u)) {
                 continue;
             }
 
@@ -89,14 +100,17 @@ class Crawler
 
                 $this->history[$u] = 1;
 
+                if ($this->assertResponseHeader($response)) {
+
+                }
                 //if response status code 200 and response content type html
-                if (!strstr($response->getHeader("Content-Type"), "text/html")) {
+                /*if (!strstr($response->getHeader("Content-Type"), "text/html")) {
                     throw new RequestException("Bad Content Type {$u} ");
                 }
 
                 if ($response->getStatusCode() != 200) {
                     throw new RequestException("Bad status code");
-                }
+                }*/
 
                 if (!$site) continue;
 

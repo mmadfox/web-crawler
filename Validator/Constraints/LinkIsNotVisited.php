@@ -3,7 +3,7 @@ namespace Madfox\WebCrawler\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class Visit extends Constraint
+class LinkIsNotVisited extends Constraint
 {
     private $history;
 
