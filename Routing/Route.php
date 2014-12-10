@@ -6,7 +6,7 @@ use Madfox\WebCrawler\Site\Site;
 
 class Route extends SymfonyRoute
 {
-    private $command;
+    private $handler;
     private $site;
 
     public function __construct($path)
@@ -24,9 +24,9 @@ class Route extends SymfonyRoute
         return $this->site;
     }
 
-    public function exec($command = null)
+    public function handler($handler)
     {
-         $this->command = $command;
+         $this->handler = $handler;
          return $this;
     }
 }

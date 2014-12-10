@@ -4,11 +4,13 @@ namespace Madfox\WebCrawler;
 use Buzz\Client\Curl;
 use Buzz\Exception\ClientException;
 use Buzz\Exception\RequestException;
-use Buzz\Util\Url;
 use Madfox\WebCrawler\Exception\SiteAlreadyExistsException;
-use Madfox\WebCrawler\Site\Address;
+use Madfox\WebCrawler\Queue\Adapter\MemoryAdapter;
+use Madfox\WebCrawler\Queue\Queue;
+use Madfox\WebCrawler\Queue\QueueInterface;
 use Madfox\WebCrawler\Site\Site;
-use Madfox\WebCrawler\Site\SiteFactory;
+use Madfox\WebCrawler\Site\SiteCollection;
+use Madfox\WebCrawler\Site\Url;
 use Buzz\Browser;
 use Madfox\WebCrawler\Validator\Constraints\LinkIsNotVisited;
 use Madfox\WebCrawler\Validator\Constraints\ResponseHeader;
@@ -16,33 +18,69 @@ use Madfox\WebCrawler\Validator\ValidatorFactory;
 
 class Crawler
 {
-    private $sites = [];
+    private $sites;
     private $queue = [];
     private $history = [];
     private $validator;
 
     public function __construct()
     {
+        $this->sites = new SiteCollection();
         $validatorFactory = new ValidatorFactory();
         $this->validator = $validatorFactory->createValidator();
     }
 
+    /**
+     * @return QueueInterface
+     */
+    public function getQueue()
+    {
+        if (null === $this->queue) {
+           $this->queue = new Queue(new MemoryAdapter());
+        }
+
+        return $this->queue;
+    }
+
+    /**
+     * @param QueueInterface $queue
+     * @return QueueInterface
+     */
+    public function setQueue(QueueInterface $queue)
+    {
+        $this->queue = $queue;
+        return $queue;
+    }
+
+    /**
+     * @return SiteCollection
+     */
+    public function getSiteCollection()
+    {
+        return $this->sites;
+    }
+
+    /**
+     * @return \Symfony\Component\Validator\Validator\RecursiveValidator
+     */
     public function validator()
     {
         return $this->validator;
     }
 
-    public function site($site)
+    /**
+     * @param Url|string $url
+     * @return Site
+     */
+    public function site($url)
     {
-        $siteFactory = new SiteFactory();
-        $site = $siteFactory->create($site);
-
-        if (isset($this->sites[$site->getAddress()->getHostname()])) {
-            throw new SiteAlreadyExistsException("Site already exists!");
+        if ($this->getSiteCollection()->has($url)) {
+            $site = $this->getSiteCollection()->get($url);
+        } else {
+            $url = $url instanceof Url ? $url : new Url($url);
+            $site = new Site($url);
+            $this->getSiteCollection()->add($site);
         }
-
-        $this->sites[$site->getAddress()->getHostname()] = $site;
-        array_push($this->queue, $site->getAddress()->toString());
 
         return $site;
     }
@@ -70,6 +108,9 @@ class Crawler
 
     public function run()
     {
+        //add sites to queue
+
+        //If the queue is full shorten its
         $client = new Browser(new Curl());
 
         while (count($this->queue) > 0) {

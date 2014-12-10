@@ -1,26 +1,21 @@
 <?php
 namespace Madfox\WebCrawler\Site;
 
-use Buzz\Util\Url;
-use Madfox\Presets\PresetsInterface;
 use Madfox\WebCrawler\Routing\Route;
-use Madfox\WebCrawler\Routing\RouteCollection;
-use Madfox\WebCrawler\Site\AddressInterface;
-use Madfox\WebCrawler\Presets\PresetsCollection;
 
 class Site
 {
-    private $address;
+    private $url;
     private $routes = [];
 
-    public function __construct(AddressInterface $address)
+    public function __construct(Url $url)
     {
-        $this->address = $address;
+        $this->url = $url;
     }
 
-    public function getAddress()
+    public function getUrl()
     {
-        return $this->address;
+        return $this->url;
     }
 
     public function ifpath($pathinfo)

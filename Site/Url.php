@@ -1,7 +1,7 @@
 <?php
-namespace Madfox\WebCrawler\Url;
+namespace Madfox\WebCrawler\Site;
 
-final class Url extends \Buzz\Util\Url
+class Url extends \Buzz\Util\Url
 {
     public function __construct($url)
     {
