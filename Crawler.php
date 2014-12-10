@@ -135,8 +135,14 @@ class Crawler
                 if ($site) {
                     echo "site found " . $site->getUrl()->toString() . "\n";
 
+                    if ($site->validPath($task)) {
+                        if ($site->pages->has($task)) {
 
+                        } else {
 
+                        }
+                        //$page = $site->addPage($task);
+                    }
                     //$response = $this->getHttpClient()->request($site->getUrl());
                     //if response validate
 

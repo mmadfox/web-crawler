@@ -4,10 +4,10 @@ namespace Madfox\WebCrawler\Queue\Adapter;
 interface AdapterInterface
 {
     /**
-     * @param string $url
+     * @param string $id
      * @return mixed
      */
-    public function enqueue($url);
+    public function enqueue($id);
 
     /**
      * @return string
@@ -20,8 +20,8 @@ interface AdapterInterface
     public function purge();
 
     /**
-     * @param string $url
+     * @param string $id
      * @return mixed
      */
-    public function ack($url);
+    public function ack($id);
 }

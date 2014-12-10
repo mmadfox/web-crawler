@@ -1,6 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Queue;
 
+use Buzz\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Site\Url;
 use Madfox\WebCrawler\Queue\Adapter\AdapterInterface;
 
@@ -25,7 +26,7 @@ class Queue implements QueueInterface
      */
     public function enqueue(Url $url)
     {
-        $string = $url->format("Hpq");
+        $string = $url->toString();
         return $this->adapter->enqueue($string);
     }
 
@@ -35,8 +36,15 @@ class Queue implements QueueInterface
     public function dequeue()
     {
         $string = $this->adapter->dequeue();
+        $url = null;
 
-        return new Url($string);
+        if ($string) {
+            try {
+                $url = new Url($string);
+            } catch (InvalidArgumentException $e) { }
+        }
+
+        return $url;
     }
 
     /**

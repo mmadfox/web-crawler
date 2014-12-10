@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Queue;
 
-use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\Site\Url;
 
 interface QueueInterface
 {

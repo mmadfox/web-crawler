@@ -16,7 +16,7 @@ $console
     ->setCode(function (InputInterface $input, OutputInterface $output) {
           $output->writeln("Run....");
           $crawler = new Crawler();
-          $crawler->site("http://ulkotours.com/")->ifpath("/")->exec();
+          $crawler->site("http://ulkotours.com/");
           $crawler->run();
     });
 

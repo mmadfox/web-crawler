@@ -1,16 +1,41 @@
 <?php
 namespace Madfox\WebCrawler\Site;
 
-use Madfox\WebCrawler\Routing\Route;
+use Madfox\WebCrawler\Routing\RouteCollection;
 
 class Site
 {
-    private $url;
-    private $routes = [];
 
+    /**
+     * @var Url
+     */
+    private $url;
+
+    /**
+     * @var RouteCollection
+     */
+    private $routeCollection;
+
+    /**
+     * @param Url $url
+     */
     public function __construct(Url $url)
     {
         $this->url = $url;
+        $this->routeCollection = new RouteCollection();
+    }
+
+    /**
+     * @return RouteCollection
+     */
+    public function getRouteCollection()
+    {
+        return $this->routeCollection;
+    }
+
+    public function validPath(Url $url)
+    {
+
     }
 
     public function getUrl()
@@ -26,8 +51,11 @@ class Site
         return $route;
     }
 
+    /**
+     * @return \Symfony\Component\Routing\Route[]
+     */
     public function routes()
     {
-        return $this->routes;
+        return $this->routeCollection->all();
     }
 }
