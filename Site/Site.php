@@ -2,6 +2,8 @@
 namespace Madfox\WebCrawler\Site;
 
 use Madfox\WebCrawler\Routing\RouteCollection;
+use Madfox\WebCrawler\Site\Mapper\Factory\PageFactory;
+use Madfox\WebCrawler\Site\Url;
 
 class Site
 {
@@ -33,9 +35,15 @@ class Site
         return $this->routeCollection;
     }
 
-    public function validPath(Url $url)
+    public function valid(Page $page)
     {
+        return true;
+    }
 
+    public function page(Url $url)
+    {
+        $pageFactory = new PageFactory();
+        return $pageFactory->createPage($url);
     }
 
     public function getUrl()

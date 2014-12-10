@@ -11,6 +11,10 @@ class SiteTest extends PHPUnit_Framework_TestCase {
         $page = $pageFactory->createPage(new Url("http://oede.by"));
 
         $site = new Site(new Url("http://google.com"));
+
+
     }
+
+
 }
  

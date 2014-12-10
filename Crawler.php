@@ -121,37 +121,39 @@ class Crawler
         $this->running = true;
 
         while ($this->isRunning()) {
-            echo "run ... \n";
+            echo "Старт < ========= > \n";
 
-            $task = $this->getQueue()->dequeue();
+            $url = $this->getQueue()->dequeue();
 
-            if (!$task) {
-                echo "Task not exists. Sleep 20sec \n";
+            if (null === $url) {
+                echo "Очередь пустая. Спим 20sec \n";
                 sleep(10);
             } else {
-                echo "TaskId " . $task->getId() . " -> " . $task->toString() . " \n";
-                $site = $this->getSiteCollection()->get($task);
+                echo "Получили урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
+                $site = $this->getSiteCollection()->get($url);
 
                 if ($site) {
-                    echo "site found " . $site->getUrl()->toString() . "\n";
+                    echo "Сайт найден -> " . $site->getUrl()->toString() . "\n";
+                    $page = $site->page($url);
+                    echo "Страница " . $page->url() . "\n";
 
-                    if ($site->validPath($task)) {
-                        if ($site->pages->has($task)) {
-
-                        } else {
-
-                        }
-                        //$page = $site->addPage($task);
+                    if ($site->valid($page)) {
+                        echo "Обработчик найден. Продолжаем работу...  \n";
+                    } else {
+                        echo "Правила для обработки не найдены \n";
                     }
-                    //$response = $this->getHttpClient()->request($site->getUrl());
-                    //if response validate
 
-                    //$links = $urlMatcher->match($response);
-                    //foreach($links as $link) {
-                    //if validator->valid $link
+                    foreach ($page->links() as $link) {
+                        echo " Ссылка  " . $link . "\n";
+                        $this->getQueue()->enqueue(new Url($link));
 
-                    echo "process.... \n";
-                    sleep(40);
+                    }
+
+                    echo ".... \n";
+                    sleep(2);
+
+                } else {
+                    echo "Сайт не найден {$site} \n";
                 }
             }
 

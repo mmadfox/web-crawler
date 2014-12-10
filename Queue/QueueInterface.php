@@ -12,7 +12,7 @@ interface QueueInterface
     public function enqueue(Url $url);
 
     /**
-     * @return Url
+     * @return Url|null
      */
     public function dequeue();
 
