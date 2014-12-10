@@ -20,6 +20,60 @@ class Url extends \Buzz\Util\Url
     }
 
     /**
+     * @param string $url
+     * @return Url
+     */
+    public function build($url)
+    {
+        $components = parse_url($url);
+        $url = "";
+
+        foreach ([
+            'scheme' => 'getScheme',
+            'host'   => 'getHostname',
+            'port'   => 'getPort',
+            'user'   => 'getUser',
+            'password' => 'getPassword',
+            'path'     => 'getPath',
+            'query'    => 'getQueryString',
+            'fragment' => 'getFragment'] as $k => $m) {
+                 $p = $this->$m();
+                 if (empty($components[$k]) && !empty($p)) {
+                     $components[$k] = $p;
+                 }
+        }
+
+        $url .= $components['scheme'] ? $components['scheme'] : "http";
+        $url .= "://";
+
+        if (!empty($components['user']) && !empty($components['password'])) {
+            $url .= $components['user'] . ":" . $components['password'] . "@";
+        } else if (!empty($user) && empty($password)) {
+            $url .= $components['user'] . "@";
+        }
+
+        $url .= $components['host'];
+
+        if (!empty($components['port'])) {
+            $url .= ":" . $components['port'];
+        }
+
+        if (!empty($components['path'])) {
+            $url .= $components['path'];
+        }
+
+        if (!empty($components['query'])) {
+            $url .= "?" . $components['query'];
+        }
+
+        if (!empty($components['fragment'])) {
+            $url .= "#" . $components['fragment'];
+        }
+
+        return new Url($url);
+    }
+
+    /**
      * @return string
      */
     public function toString()
@@ -71,6 +125,9 @@ class Url extends \Buzz\Util\Url
         return md5($this->toString());
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->toString();

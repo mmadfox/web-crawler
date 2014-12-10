@@ -13,14 +13,35 @@ class UrlTest extends PHPUnit_Framework_TestCase {
         $url = new Url($expected);
         $this->assertEquals($url->toString(), $expected);
     }
-    /**
-     * @expectedException \Exception;
-     */
-    public function testInvalidConstructor()
+
+    public function testBuildUrl()
     {
-        new Url("//google.com");
-        new Url("/path/to/hell");
-        new Url("path/path/path:q");
+        $expected = "//google.com/golang/?test=1";
+        $url = new Url("http://google.com");
+        $newUrl = $url->build($expected);
+        $this->assertEquals("http://google.com:80/golang/?test=1", $newUrl->toString());
+
+        $expected = "/golang/?test=1#fragment";
+        $url = new Url("http://google.com");
+        $newUrl = $url->build($expected);
+        $this->assertEquals("http://google.com:80/golang/?test=1#fragment", $newUrl->toString());
+
+    }
+
+    /**
+     * @expectedException Buzz\Exception\InvalidArgumentException;
+     */
+    public function testInvalidArgumentException()
+    {
+        try {
+            new Url("//google.com");
+            new Url("/path/to/hell");
+            new Url("path/path/path:q");
+        }catch (InvalidArgumentException $e) {
+            return;
+        }
+
+        $this->fail();
     }
 
     /**
