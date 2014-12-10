@@ -2,9 +2,7 @@
 namespace Madfox\WebCrawler;
 
 use Buzz\Client\Curl;
-use Buzz\Exception\ClientException;
-use Buzz\Exception\RequestException;
-use Madfox\WebCrawler\Exception\SiteAlreadyExistsException;
+use Buzz\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Queue\Adapter\MemoryAdapter;
 use Madfox\WebCrawler\Queue\Queue;
 use Madfox\WebCrawler\Queue\QueueInterface;
@@ -19,9 +17,10 @@ use Madfox\WebCrawler\Validator\ValidatorFactory;
 class Crawler
 {
     private $sites;
-    private $queue = [];
+    private $queue;
     private $history = [];
     private $validator;
+    private $running = false;
 
     public function __construct()
     {
@@ -69,11 +68,14 @@ class Crawler
     }
 
     /**
-     * @param Url|string $url
-     * @return Site
+     * @param $url
+     * @return Site|null
+     * @throws \Buzz\Exception\InvalidArgumentException
      */
     public function site($url)
     {
+        $url = new Url($url);
+
         if ($this->getSiteCollection()->has($url)) {
             $site = $this->getSiteCollection()->get($url);
         } else {
@@ -85,9 +87,12 @@ class Crawler
         return $site;
     }
 
+    /**
+     * @return bool
+     */
     public function isRunning()
     {
-
+        return $this->running;
     }
 
     protected function assertLinkIsNotVisited($url)
@@ -108,9 +113,50 @@ class Crawler
 
     public function run()
     {
-        //add sites to queue
+        if ($this->isRunning()) {
+            return;
+        }
 
-        //If the queue is full shorten its
+        $this->prepareRun();
+        $this->running = true;
+
+        while ($this->isRunning()) {
+            echo "run ... \n";
+
+            $task = $this->getQueue()->dequeue();
+
+            if (!$task) {
+                echo "Task not exists. Sleep 20sec \n";
+                sleep(10);
+            } else {
+                echo "TaskId " . $task->getId() . " -> " . $task->toString() . " \n";
+                $site = $this->getSiteCollection()->get($task);
+
+                if ($site) {
+                    echo "site found " . $site->getUrl()->toString() . "\n";
+
+
+
+                    //$response = $this->getHttpClient()->request($site->getUrl());
+                    //if response validate
+
+                    //$links = $urlMatcher->match($response);
+                    //foreach($links as $link) {
+                    //if validator->valid $link
+
+                    echo "process.... \n";
+                    sleep(40);
+                }
+            }
+
+            sleep(1);
+        }
+    }
+
+    public function runOld()
+    {
+        $this->prepareRun();
+
         $client = new Browser(new Curl());
 
         while (count($this->queue) > 0) {
@@ -119,10 +165,11 @@ class Crawler
             echo "Queue length = " . count($this->queue) . " Start time " . $startTime . "";
             echo "Start loop... \n";
 
-            $u = array_shift($this->queue);
-            echo "--- get item from queue {$u} \n";
+            $task = $this->getQueue()->dequeue();
 
-            if ($this->assertLinkIsNotVisited($u)) {
+            echo "--- get task url from queue {$task} \n";
+
+            if ($this->assertLinkIsNotVisited($task)) {
                 continue;
             }
 
@@ -130,20 +177,18 @@ class Crawler
 
             }*/
 
-            echo " ==== GET URL {$u} ==== \n";
-
-            $url = new Url($u);
+            echo " ==== GET URL {$task} ==== \n";
 
             try {
 
-                $site = $this->sites[$url->getHostname()];
-                $response = $client->get($url);
+                //$site = $this->sites[$url->getHostname()];
+                //$response = $client->get($url);
 
-                $this->history[$u] = 1;
+                //$this->history[$u] = 1;
 
-                if ($this->assertResponseHeader($response)) {
+                //if ($this->assertResponseHeader($response)) {
 
-                }
+                //}
                 //if response status code 200 and response content type html
                 /*if (!strstr($response->getHeader("Content-Type"), "text/html")) {
                     throw new RequestException("Bad Content Type {$u} ");
@@ -153,12 +198,12 @@ class Crawler
                     throw new RequestException("Bad status code");
                 }*/
 
-                if (!$site) continue;
+                //if (!$site) continue;
 
                 echo  "--- Match urls \n";
 
                 //if $site->match($url) Route->exec();
-
+                $response = "";
                 $pattern = '/<a\s[^>]*href\s*=\s*([\"\']??)([^\" >]*?)\\1[^>]*>.*<\/a>/siU';
                 preg_match_all($pattern, $response, $match);
                 unset($match[0]);
@@ -191,6 +236,14 @@ class Crawler
             echo "\n";
             echo "End time " . $res;
             echo "\n";
+        }
+    }
+
+    private function prepareRun()
+    {
+        foreach ($this->getSiteCollection() as $site) {
+            $siteUrl = $site->getUrl();
+            $this->getQueue()->enqueue($siteUrl);
         }
     }
 }
