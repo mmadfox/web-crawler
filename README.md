@@ -5,21 +5,18 @@ Search the web
 
 <h3>Example API</h3>
 
+<h4>All pages handled</h4>
 ```php
-$application = Crawler::create();
+$crawler = Crawler::create();
 
-$application->site("http:://google.com")
-            ->conf([])
-            ->ifpath("/")
-            ->exec(function($page) {
+$crawler->site("http://ru.lipsum.com/")
+        ->ifpath("*")
+        ->handler(function ($page) {
+              $url = $page->getUrl();
+              $links = $page->getLinks();
+              $content = $page->content();
+         });
 
-            });
-
-$application->site("http://foodbook.guru")
-            ->ifpath("/recipes/{slug}/{id}")->exec(function($page) {});
-            ->ifpath("/category/{id}/reviews.html")->exec(function($page) {})
-            ->ifpath("/category/{slug}/foo/bar/{id}")->exec(function($page){})
-
-$application->run();
+$crawler->run();
 ```
 
