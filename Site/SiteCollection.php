@@ -21,7 +21,7 @@ class SiteCollection implements \IteratorAggregate, \Countable
      */
     public function add(Site $site)
     {
-        $id = $site->getUrl()->getId();
+        $id = $site->getUrl()->getHostname();
         unset($this->sites[$id]);
 
         $this->sites[$id] = $site;
@@ -33,7 +33,9 @@ class SiteCollection implements \IteratorAggregate, \Countable
      */
     public function get(Url $url)
     {
-        return isset($this->sites[$url->getId()]) ? $this->sites[$url->getId()] : null;
+        return isset($this->sites[$url->getHostname()])
+               ? $this->sites[$url->getHostname()]
+               : null;
     }
 
     /**
@@ -59,7 +61,7 @@ class SiteCollection implements \IteratorAggregate, \Countable
      */
     public function remove(Url $url)
     {
-        unset($this->sites[$url->getId()]);
+        unset($this->sites[$url->getHostname()]);
     }
 
     /**

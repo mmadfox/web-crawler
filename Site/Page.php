@@ -21,6 +21,16 @@ class Page
         return $this->id;
     }
 
+    public function isEpmty()
+    {
+        return count($this->links);
+    }
+
+    public function isNotEmpty()
+    {
+        return !$this->isEpmty();
+    }
+
     public function url()
     {
         return $this->url;

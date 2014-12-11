@@ -95,21 +95,6 @@ class Crawler
         return $this->running;
     }
 
-    protected function assertLinkIsNotVisited($url)
-    {
-        $errors = $this->validator()
-                    ->validate($url, new LinkIsNotVisited($this->history));
-
-        return count($errors) != 0;
-    }
-
-    protected function assertResponseHeader($response)
-    {
-        $errors = $this->validator()
-                     ->validate($response, new ResponseHeader());
-
-        return count($errors) == 0;
-    }
 
     public function run()
     {
@@ -126,16 +111,20 @@ class Crawler
             $url = $this->getQueue()->dequeue();
 
             if (null === $url) {
-                echo "Очередь пустая. Спим 20sec \n";
+                echo "Очередь пустая. Ожидание... 20sec \n";
                 sleep(10);
             } else {
-                echo "Получили урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
+                echo "Получен урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
+
                 $site = $this->getSiteCollection()->get($url);
 
                 if ($site) {
                     echo "Сайт найден -> " . $site->getUrl()->toString() . "\n";
                     $page = $site->page($url);
                     echo "Страница " . $page->url() . "\n";
+                    //Bad page exception
+
+                    $this->history[$page->id()] = 1;
 
                     if ($site->valid($page)) {
                         echo "Обработчик найден. Продолжаем работу...  \n";
@@ -145,12 +134,16 @@ class Crawler
 
                     foreach ($page->links() as $link) {
                         echo " Ссылка  " . $link . "\n";
-                        $this->getQueue()->enqueue(new Url($link));
-
+                        $l = new Url($link);
+                        if (!isset($this->history[$l->toString()])) {
+                            $this->getQueue()->enqueue($l);
+                        } else {
+                            echo "Exists! \n";
+                        }
                     }
 
                     echo ".... \n";
-                    sleep(2);
+                    sleep(60);
 
                 } else {
                     echo "Сайт не найден {$site} \n";
@@ -158,92 +151,6 @@ class Crawler
             }
 
             sleep(1);
-        }
-    }
-
-    public function runOld()
-    {
-        $this->prepareRun();
-
-        $client = new Browser(new Curl());
-
-        while (count($this->queue) > 0) {
-            $startTime = microtime(false);
-
-            echo "Queue length = " . count($this->queue) . " Start time " . $startTime . "";
-            echo "Start loop... \n";
-
-            $task = $this->getQueue()->dequeue();
-
-            echo "--- get task url from queue {$task} \n";
-
-            if ($this->assertLinkIsNotVisited($task)) {
-                continue;
-            }
-
-            /*if (isset($this->history[$u])) {
-
-            }*/
-
-            echo " ==== GET URL {$task} ==== \n";
-
-            try {
-
-                //$site = $this->sites[$url->getHostname()];
-                //$response = $client->get($url);
-
-                //$this->history[$u] = 1;
-
-                //if ($this->assertResponseHeader($response)) {
-
-                //}
-                //if response status code 200 and response content type html
-                /*if (!strstr($response->getHeader("Content-Type"), "text/html")) {
-                    throw new RequestException("Bad Content Type {$u} ");
-                }
-
-                if ($response->getStatusCode() != 200) {
-                    throw new RequestException("Bad status code");
-                }*/
-
-                //if (!$site) continue;
-
-                echo  "--- Match urls \n";
-
-                //if $site->match($url) Route->exec();
-                $response = "";
-                $pattern = '/<a\s[^>]*href\s*=\s*([\"\']??)([^\" >]*?)\\1[^>]*>.*<\/a>/siU';
-                preg_match_all($pattern, $response, $match);
-                unset($match[0]);
-                unset($match[1]);
-
-                foreach ($match[2] as $rawUrl) {
-
-                    //if Domain valid and url not resource
-                    if (preg_match(Address::REGEX_ADDRESS, $rawUrl)) {
-                        $testUrl = new Url($rawUrl);
-                        //formatted url
-
-                        //if Domain === Domain
-                        if ($testUrl->getHostname() == $site->getAddress()->getHostname()) {
-
-                            //if not visited
-                            array_push($this->queue, $testUrl->format("Hpq"));
-                        }
-                        //echo $rawUrl . "\n";
-                    }
-                }
-
-            } catch (\Exception $e) {
-               echo "Log => " . $e->getMessage() . "\n";
-               sleep(10);
-            }
-
-            $endTime = microtime(false);
-            $res = $endTime - $startTime;
-            echo "\n";
-            echo "End time " . $res;
-            echo "\n";
         }
     }
 

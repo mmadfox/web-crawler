@@ -8,6 +8,12 @@ use Madfox\WebCrawler\Site\Url;
 class Site
 {
 
+    private $history = [];
+
+    /**
+     * @var string
+     */
+    private $id;
     /**
      * @var Url
      */
@@ -25,6 +31,12 @@ class Site
     {
         $this->url = $url;
         $this->routeCollection = new RouteCollection();
+        $this->id = md5($url->getHostname());
+    }
+
+    public function id()
+    {
+        return $this->id;
     }
 
     /**

@@ -18,11 +18,12 @@ class MemoryAdapter implements AdapterInterface
 
     /**
      * @param string $url
-     * @return mixed
+     * @return bool
      */
     public function enqueue($url)
     {
         array_push($this->queue, $url);
+        return true;
     }
 
     /**
