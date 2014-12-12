@@ -8,12 +8,15 @@ use Madfox\WebCrawler\Queue\Adapter\PhpAMQPAdapter;
 
 class QueueFactory
 {
+    const QUEUE_ADAPTER_MEMORY = "Memory";
+    const QUEUE_ADAPTER_PHPAMQP = "PhpAMQP";
     /**
      * @var array
      */
     private $adapters = [
-        'Memory'   => '\\Madfox\\WebCrawler\\Queue\\Adapter\\MemoryAdapter',
-        'PhpAMQP'  => '\\Madfox\\WebCrawler\\Queue\\Adapter\\PhpAMQPAdapter'
+        self::QUEUE_ADAPTER_MEMORY  => '\\Madfox\\WebCrawler\\Queue\\Adapter\\MemoryAdapter',
+        self::QUEUE_ADAPTER_PHPAMQP => '\\Madfox\\WebCrawler\\Queue\\Adapter\\PhpAMQPAdapter',
+
     ];
     /**
      * @var array
