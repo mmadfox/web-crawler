@@ -12,8 +12,8 @@ class QueueFactory
      * @var array
      */
     private $adapters = [
-        'Memory' => 'Madfox\\WebCrawler\\Queue\\Adapter\\MemoryAdapter',
-        'PhpAMQP' => 'Madfox\\WebCrawler\\Queue\\Adapter\\PhpAMQPAdapter'
+        'Memory'   => '\\Madfox\\WebCrawler\\Queue\\Adapter\\MemoryAdapter',
+        'PhpAMQP'  => '\\Madfox\\WebCrawler\\Queue\\Adapter\\PhpAMQPAdapter'
     ];
     /**
      * @var array
@@ -58,6 +58,14 @@ class QueueFactory
     }
 
     /**
+     * @return array
+     */
+    public function supportedAdapters()
+    {
+        return $this->adapters;
+    }
+
+    /**
      * @return PhpAMQPAdapter
      */
     private function PhpAMQPAdapter()
@@ -87,7 +95,7 @@ class QueueFactory
 
     private function adapterNotExists()
     {
-        return !array_key_exists($this->adapterName, $this->adapters);
+        return !isset($this->adapters[$this->adapterName]);
     }
 
     private function getAdapterClass()

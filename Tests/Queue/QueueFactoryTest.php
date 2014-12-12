@@ -13,14 +13,40 @@ class QueueFactoryTest extends PHPUnit_Framework_TestCase {
         $this->factory = new QueueFactory();
     }
 
-    public function testCreateQueue()
+    public function testCreateQueueWithParameters()
     {
+         $optoins = [
+             'host'  => 'localhost',
+             'queue' => 'qn',
+         ];
 
-         $this->factory->create("PhpAMQP", array(
-             'host'      => 'localhost',
-             'queueName' => 'qn',
-             'port'      => ''
-         ));
+         foreach ($this->factory->supportedAdapters() as $adapterName => $class) {
+             $q = $this->factory->create($adapterName, $optoins);
+             $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
+         }
+    }
+
+    public function testCreateQueueWithoutParameters()
+    {
+        $optoins = [];
+
+        foreach ($this->factory->supportedAdapters() as $adapterName => $class) {
+            $q = $this->factory->create($adapterName, $optoins);
+            $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
+        }
+    }
+
+    /**
+     * @expectedException Madfox\WebCrawler\Exception\InvalidArgumentException
+     */
+    public function testCreateBadAdapterQueue()
+    {
+        $optoins = [] ;
+
+        foreach (['foo' => '///', 'bar' => '///'] as $adapterName => $class) {
+            $q = $this->factory->create($adapterName, $optoins);
+            $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
+        }
     }
 }
  
