@@ -2,7 +2,12 @@
     "name": "mmadfox/web-crawler",
     "type": "library",
     "description": "Search the web",
-    "minimum-stability": "stable",
+    "keywords": [
+        "crawler",
+        "web-crawler",
+        "php crawler",
+        "www spider"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -11,12 +16,20 @@
         }
     ],
 
+    "repositories": [
+        {
+            "url": "https://github.com/KngGroup/Schedule.git",
+            "type": "git"
+        }
+    ],
+
     "require": {
         "php": ">=5.3.3",
         "kriswallsmith/buzz": "dev-master",
         "symfony/routing": "3.0.*@dev",
         "symfony/console": "3.0.*@dev",
-        "symfony/validator": "2.6.*@dev"
+        "symfony/validator": "2.6.*@dev",
+        "bydm/schedule": "dev-master"
     },
 
     "autoload": {
