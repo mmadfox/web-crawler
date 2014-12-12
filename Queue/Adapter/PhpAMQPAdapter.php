@@ -12,8 +12,24 @@ class PhpAMQPAdapter implements AdapterInterface
     private $queue;
     private $connectionOptions = array();
 
-    public function __construct($host, $port, $user, $pass, $vhost = '', $exchange = 'madfox_exchange', $queue = 'madfox')
-    {
+    /**
+     * @param string $host
+     * @param string $port
+     * @param string $user
+     * @param string $pass
+     * @param string $vhost
+     * @param string $exchange
+     * @param string $queue
+     */
+    public function __construct(
+        $host,
+        $port,
+        $user,
+        $pass,
+        $vhost = '/',
+        $exchange = 'webcrawler_exchange',
+        $queue = 'webxrawler_queue'
+    ) {
         $this->exchange = $exchange;
         $this->queue = $queue;
         $this->connectionOptions = array(

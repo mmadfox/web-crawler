@@ -16,8 +16,7 @@
         "kriswallsmith/buzz": "dev-master",
         "symfony/routing": "3.0.*@dev",
         "symfony/console": "3.0.*@dev",
-        "symfony/validator": "2.6.*@dev",
-        "videlalvaro/php-amqplib": "2.4.*@dev"
+        "symfony/validator": "2.6.*@dev"
     },
 
     "autoload": {
