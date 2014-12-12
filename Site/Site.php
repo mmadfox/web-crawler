@@ -63,6 +63,11 @@ class Site
         return $this->url;
     }
 
+    public function filter()
+    {
+
+    }
+
     public function ifpath($pathinfo)
     {
         $route = new Route($pathinfo);

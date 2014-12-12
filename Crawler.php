@@ -13,6 +13,7 @@ use Buzz\Browser;
 use Madfox\WebCrawler\Validator\Constraints\LinkIsNotVisited;
 use Madfox\WebCrawler\Validator\Constraints\ResponseHeader;
 use Madfox\WebCrawler\Validator\ValidatorFactory;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 
 class Crawler
 {
@@ -95,6 +96,21 @@ class Crawler
         return $this->running;
     }
 
+    protected function assertLinkIsNotVisited($url)
+    {
+        $errors = $this->validator()
+                    ->validate($url, new LinkIsNotVisited($this->history));
+
+        return count($errors) != 0;
+    }
+
+    protected function assertResponseHeader($response)
+    {
+        $errors = $this->validator()
+                     ->validate($response, new ResponseHeader());
+
+        return count($errors) == 0;
+    }
 
     public function run()
     {
@@ -111,20 +127,32 @@ class Crawler
             $url = $this->getQueue()->dequeue();
 
             if (null === $url) {
-                echo "Очередь пустая. Ожидание... 20sec \n";
+                echo "Очередь пустая. Спим 20sec \n";
                 sleep(10);
             } else {
-                echo "Получен урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
 
+                echo "Получили урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
                 $site = $this->getSiteCollection()->get($url);
 
                 if ($site) {
+
+                    try {
+                        //$this->getQueue()->ack($url);
+                    } catch(AMQPProtocolChannelException $e) {
+                        echo "AMQPProtocolChannelException \n";
+                    }
+
+
+                    if (isset($this->history[$url->getId()])) {
+                        echo "Visited \n";
+                        continue;
+                    }
+
+                    $this->history[$url->getId()] = $url->toString();
+
                     echo "Сайт найден -> " . $site->getUrl()->toString() . "\n";
                     $page = $site->page($url);
                     echo "Страница " . $page->url() . "\n";
-                    //Bad page exception
-
-                    $this->history[$page->id()] = 1;
 
                     if ($site->valid($page)) {
                         echo "Обработчик найден. Продолжаем работу...  \n";
@@ -133,17 +161,13 @@ class Crawler
                     }
 
                     foreach ($page->links() as $link) {
-                        echo " Ссылка  " . $link . "\n";
-                        $l = new Url($link);
-                        if (!isset($this->history[$l->toString()])) {
-                            $this->getQueue()->enqueue($l);
-                        } else {
-                            echo "Exists! \n";
-                        }
+                        //echo " Ссылка  " . $link . "\n";
+                        $this->getQueue()->enqueue(new Url($link));
+
                     }
 
                     echo ".... \n";
-                    sleep(60);
+                    sleep(2);
 
                 } else {
                     echo "Сайт не найден {$site} \n";
