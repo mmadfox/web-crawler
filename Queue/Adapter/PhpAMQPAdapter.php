@@ -3,7 +3,6 @@ namespace Madfox\WebCrawler\Queue\Adapter;
 
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-use PhpAmqpLib\Channel\AMQPChannel;
 
 class PhpAMQPAdapter implements AdapterInterface
 {
@@ -28,7 +27,7 @@ class PhpAMQPAdapter implements AdapterInterface
         $pass,
         $vhost = '/',
         $exchange = 'webcrawler_exchange',
-        $queue = 'webxrawler_queue'
+        $queue = 'webcrawler_queue'
     ) {
         $this->exchange = $exchange;
         $this->queue = $queue;
@@ -41,6 +40,10 @@ class PhpAMQPAdapter implements AdapterInterface
         );
     }
 
+    /**
+     * @param string $id
+     * @return mixed|void
+     */
     public function enqueue($id)
     {
         $msg = new AMQPMessage(
@@ -51,9 +54,13 @@ class PhpAMQPAdapter implements AdapterInterface
         $this->getChannel()->basic_publish($msg, $this->exchange, '', false, false);
     }
 
+    /**
+     * @return bool|string
+     */
     public function dequeue()
     {
-        $msg = $this->getChannel()->basic_get($this->queue);
+
+        $msg = $this->getChannel()->basic_get($this->queue, true);
         if (!$msg) {
             return false;
         }
@@ -61,11 +68,18 @@ class PhpAMQPAdapter implements AdapterInterface
         return $msg->body;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function purge()
     {
         return $this->getChannel()->queue_purge($this->queue);
     }
 
+    /**
+     * @param string $identifier
+     * @return mixed|void
+     */
     public function ack($identifier)
     {
         $this->getChannel()->basic_ack($identifier);
@@ -88,6 +102,11 @@ class PhpAMQPAdapter implements AdapterInterface
             $this->channel = $ch;
         }
         return $this->channel;
+    }
+
+    public function __destruct()
+    {
+        $this->getChannel()->close();
     }
 
 }
