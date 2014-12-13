@@ -27,10 +27,6 @@ $crawler->run();
 $crawler = Crawler::create();
 
 $crawler->site("http://ru.lipsum.com/")
-        ->constraint('day|wheek|month|year')
-             ->limit(12)
-             ->
-
         ->ifpath("/filter/{filter_name}/{filter_id}")
         ->filter(function ($page) {
              $content = $page->content();
