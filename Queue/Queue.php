@@ -31,7 +31,7 @@ class Queue implements QueueInterface
     }
 
     /**
-     * @return Url
+     * @return Url | null
      */
     public function dequeue()
     {

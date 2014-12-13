@@ -22,10 +22,15 @@ class PageFactory
 
     public function createPage(Url $url)
     {
-        $html = $this->request($url->toString());
-        $links = $this->match($html, $url);
+        try {
+            $html = $this->request($url->toString());
+            $links = $this->match($html, $url);
+            $page = new Page($url, $links, $html);
+        } catch(\Exception $e) {
+            //TODO LOG
+            $page = null;
+        }
 
-        $page = new Page($url, $links, $html);
         return $page;
     }
 

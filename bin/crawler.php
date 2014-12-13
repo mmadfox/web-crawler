@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Madfox\WebCrawler\Crawler;
-use PhpAmqpLib\Connection\AMQPConnection;
 $console = new Application();
 
 $console

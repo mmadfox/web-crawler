@@ -20,20 +20,16 @@ class QueueFactoryTest extends PHPUnit_Framework_TestCase {
              'queue' => 'qn',
          ];
 
-         foreach ($this->factory->supportedAdapters() as $adapterName => $class) {
-             $q = $this->factory->create($adapterName, $options);
-             $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
-         }
+        $q = $this->factory->create(QueueFactory::QUEUE_ADAPTER_MEMORY, $options);
+        $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter  invalid");
     }
 
     public function testCreateQueueWithoutParameters()
     {
         $options = [];
 
-        foreach ($this->factory->supportedAdapters() as $adapterName => $class) {
-            $q = $this->factory->create($adapterName,  $options);
-            $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
-        }
+        $q = $this->factory->create(QueueFactory::QUEUE_ADAPTER_MEMORY,  $options);
+        $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter invalid");
     }
 
     /**
@@ -43,10 +39,8 @@ class QueueFactoryTest extends PHPUnit_Framework_TestCase {
     {
         $options = [] ;
 
-        foreach (['foo' => '///', 'bar' => '///'] as $adapterName => $class) {
-            $q = $this->factory->create($adapterName,  $options);
-            $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter {$adapterName} invalid");
-        }
+        $q = $this->factory->create("BadAdapter",  $options);
+        $this->assertInstanceOf("Madfox\\WebCrawler\\Queue\\Queue", $q, "Adapter invalid");
     }
 }
  
