@@ -14,7 +14,7 @@ interface DriverInterface
     /**
      * @return string
      */
-    public function get();
+    public function get($id);
 
     /**
      * @param int|string $id
@@ -27,4 +27,9 @@ interface DriverInterface
      * @return mixed
      */
     public function remove($id);
+
+    /**
+     * @return bool
+     */
+    public function purge();
 } 

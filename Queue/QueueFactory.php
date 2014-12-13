@@ -39,7 +39,7 @@ class QueueFactory
         $this->options = $options;
         $this->adapterName = (string)$adapterName;
 
-        if ($this->adapterNotExists($this->adapterName)) {
+        if ($this->adapterNotExists()) {
             throw new InvalidArgumentException(sprintf("Adapter %s does not exists", $adapterName));
         }
 

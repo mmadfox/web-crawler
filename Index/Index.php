@@ -94,4 +94,21 @@ class Index
 
         return $return;
     }
+
+    /**
+     * @return bool
+     */
+    public function purge()
+    {
+        $return = false;
+
+        try {
+            $return = $this->driver->purge();
+
+        } catch (\Exception $exception) {
+            throw new RuntimeException($exception->getMessage());
+        }
+
+        return $return;
+    }
 } 
