@@ -10,7 +10,7 @@ class MergeTwoString implements StrategyInterface
         return is_string($url1) && is_string($url2);
     }
 
-    public function factory($url1, $url2)
+    public function build($url1, $url2)
     {
 
     }

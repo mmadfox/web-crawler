@@ -26,16 +26,30 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
 
     public function testMergeTwoInstanceUrl()
     {
-        $url1 = $this->getUrl("http://google.com/path/1/merge/2");
-        $url2 = $this->getUrl("http://google.com/path/5/orange/2/test/ggg/#fragment");
+        $url1 = $this->getUrl("http://google.com/search?id=1");
+        $url2 = $this->getUrl("http://mad.com/path/5");
         $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com/path/1/merge/2/test/ggg/#fragment", $resUrl->toString());
-
-        $url1 = $this->getUrl("/path/1/merge/2");
-        $url2 = $this->getUrl("http://google.com/path/5/orange/2/test/ggg/#fragment");
-        $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com/path/1/merge/2/test/ggg/#fragment", $resUrl->toString());
+        $this->assertEquals("http://google.com:80/search?id=1", $resUrl->toString());
     }
+
+    public function testMergeOneStringOneInstanceUrl()
+    {
+        $url1 = "/path/to/merge?check=1";
+        $url2 = $this->getUrl("http://google.com/");
+        $resUrl = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
+
+        $url1 = "//";
+        $url2 = $this->getUrl("http://google.com/");
+        $resUrl = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
+
+        $url1 = "mailto:sergey.liskonog@gmail.com";
+        $url2 = $this->getUrl("http://google.com/");
+        $resUrl = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
+    }
+
 
     private function getUrl($url)
     {

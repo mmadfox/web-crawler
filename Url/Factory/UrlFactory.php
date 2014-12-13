@@ -13,7 +13,8 @@ class UrlFactory
     private $strategyClasses = [
         'MergeTwoInstance'           =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeTwoInstance",
         'MergeTwoString'             =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeTwoString",
-        'MergeOneStringOneInstance'  =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeOneStringOneInstance"
+        'MergeOneStringOneInstance'  =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeOneStringOneInstance",
+        'MergeDafault'               =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeDefault",
     ];
 
     /**
@@ -96,53 +97,8 @@ class UrlFactory
             throw new RuntimeException("The strategy class not registered");
         }
 
-        return $instance->factory($url1, $url2);
+        $url = $instance->build($url1, $url2);
 
-        /*$components = parse_url($url);
-        $url = "";
-
-        foreach ([
-                     'scheme' => 'getScheme',
-                     'host'   => 'getHostname',
-                     'port'   => 'getPort',
-                     'user'   => 'getUser',
-                     'password' => 'getPassword',
-                     'path'     => 'getPath',
-                     'query'    => 'getQueryString',
-                     'fragment' => 'getFragment'] as $k => $m) {
-            $p = $this->$m();
-            if (empty($components[$k]) && !empty($p)) {
-                $components[$k] = $p;
-            }
-        }
-
-        $url .= $components['scheme'] ? $components['scheme'] : "http";
-        $url .= "://";
-
-        if (!empty($components['user']) && !empty($components['password'])) {
-            $url .= $components['user'] . ":" . $components['password'] . "@";
-        } else if (!empty($user) && empty($password)) {
-            $url .= $components['user'] . "@";
-        }
-
-        $url .= $components['host'];
-
-        if (!empty($components['port'])) {
-            $url .= ":" . $components['port'];
-        }
-
-        if (!empty($components['path'])) {
-            $url .= $components['path'];
-        }
-
-        if (!empty($components['query'])) {
-            $url .= "?" . $components['query'];
-        }
-
-        if (!empty($components['fragment'])) {
-            $url .= "#" . $components['fragment'];
-        }
-
-        return new Url($url);*/
+        return new Url($url);
     }
 }
