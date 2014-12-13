@@ -1,6 +1,6 @@
 <?php
 use \Madfox\WebCrawler\Index\Index;
-use Madfox\WebCrawler\Site\Url;
+use \Madfox\WebCrawler\Url\Url;
 
 class IndexTest extends PHPUnit_Framework_TestCase {
 

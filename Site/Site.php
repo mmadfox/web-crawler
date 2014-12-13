@@ -3,7 +3,7 @@ namespace Madfox\WebCrawler\Site;
 
 use Madfox\WebCrawler\Routing\RouteCollection;
 use Madfox\WebCrawler\Site\Mapper\Factory\PageFactory;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 
 class Site
 {

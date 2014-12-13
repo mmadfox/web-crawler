@@ -3,7 +3,7 @@ namespace Madfox\WebCrawler\Index;
 
 use Madfox\WebCrawler\Exception\RuntimeException;
 use Madfox\WebCrawler\Index\Driver\DriverInterface;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 
 class Index
 {

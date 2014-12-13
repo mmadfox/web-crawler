@@ -1,5 +1,5 @@
 <?php
-namespace Madfox\WebCrawler\Site;
+namespace Madfox\WebCrawler\Url;
 
 use Buzz\Exception\InvalidArgumentException;
 

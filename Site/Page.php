@@ -1,6 +1,8 @@
 <?php
 namespace Madfox\WebCrawler\Site;
 
+use Madfox\WebCrawler\Url\Url;
+
 class Page
 {
     private $url;

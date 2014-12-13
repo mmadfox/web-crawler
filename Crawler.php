@@ -8,7 +8,7 @@ use Madfox\WebCrawler\Queue\Queue;
 use Madfox\WebCrawler\Queue\QueueInterface;
 use Madfox\WebCrawler\Site\Site;
 use Madfox\WebCrawler\Site\SiteCollection;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url;
 use Buzz\Browser;
 use Madfox\WebCrawler\Validator\Constraints\LinkIsNotVisited;
 use Madfox\WebCrawler\Validator\Constraints\ResponseHeader;

@@ -1,7 +1,7 @@
 <?php
 
 use \Madfox\WebCrawler\Site\SiteCollection;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\Site\Site;
 
 

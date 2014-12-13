@@ -1,6 +1,6 @@
 <?php
 
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 use Buzz\Exception\InvalidArgumentException;
 
 class UrlTest extends PHPUnit_Framework_TestCase {

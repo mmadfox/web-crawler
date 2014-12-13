@@ -5,7 +5,7 @@ use Buzz\Browser;
 use Buzz\Client\Curl;
 use Buzz\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Site\Page;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\Validator\ValidatorFactory;
 
 class PageFactory
