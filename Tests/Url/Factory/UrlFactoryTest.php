@@ -10,46 +10,39 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
         $this->factory = new UrlFactory();
     }
 
-    public function testCreateValidUrl()
+    public function testMergeTwoString()
     {
-        $url = $this->getUrl("http://google.com");
-        $this->assertInstanceOf("Madfox\\WebCrawler\\Url\\Url", $url);
+         $url1 = "Baltica";
+         $url2 = "http://ulko.com//";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com/Baltica", (string) $res);
+
+         $url1 = "http://ulko.com/Baltica";
+         $url2 = "/Path/To/Baltica";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals($url1, (string) $res);
+
+         $url1 = "://Baltica";
+         $url2 = "http://ulko.com";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com/Baltica", (string) $res);
+
+         $url1 = "mailto:serg@ya.ru";
+         $url2 = "http://ulko.com";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com", (string) $res);
+
+         $url1 = "skype:serg@com/call";
+         $url2 = "http://ulko.com/path/to/res";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com/path/to/res", (string) $res);
+
     }
-
-    /**
-     * @expectedException Madfox\WebCrawler\Exception\InvalidArgumentException
-     */
-    public function testCreateInvalidUrl()
-    {
-        $this->getUrl("://google.com");
-    }
-
-    public function testMergeTwoInstanceUrl()
-    {
-        $url1 = $this->getUrl("http://google.com/search?id=1");
-        $url2 = $this->getUrl("http://mad.com/path/5");
-        $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com:80/search?id=1", $resUrl->toString());
-    }
-
-    public function testMergeOneStringOneInstanceUrl()
-    {
-        $url1 = "/path/to/merge?check=1";
-        $url2 = $this->getUrl("http://google.com/");
-        $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
-
-        $url1 = "//";
-        $url2 = $this->getUrl("http://google.com/");
-        $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
-
-        $url1 = "mailto:sergey.liskonog@gmail.com";
-        $url2 = $this->getUrl("http://google.com/");
-        $resUrl = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://google.com:80/path/to/merge?check=1", $resUrl->toString());
-    }
-
 
     private function getUrl($url)
     {
