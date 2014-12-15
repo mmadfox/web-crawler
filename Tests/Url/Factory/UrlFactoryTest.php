@@ -10,9 +10,49 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
         $this->factory = new UrlFactory();
     }
 
+    public function testMergeTwoInstance()
+    {
+        $url1 = new Url("http://ulko.com/Baltica/Confirm-Url/");
+        $url2 = new Url("http://ulko.com/Merge/Me?q=1");
+        $res = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://ulko.com/Baltica/Confirm-Url/?q=1", (string) $res);
+    }
+
+    public function testMergeOneStringOneInstance()
+    {
+        $url1 = "/Baltica/Confirm-Url/";
+        $url2 = new Url("http://ulko.com/");
+        $res = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://ulko.com/Baltica/Confirm-Url/", (string) $res);
+
+        $url1 = "mailto:serg@lis.ya";
+        $url2 = new Url("http://ulko.com/");
+        $res = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://ulko.com/", (string) $res);
+
+        $url1 = "//Baltica/Confirm-Url/";
+        $url2 = new Url("http://ulko.com/");
+        $res = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://ulko.com/Baltica/Confirm-Url/", (string) $res);
+
+        $url1 = "javascript:void(0)";
+        $url2 = new Url("http://ulko.com/");
+        $res = $this->factory->merge($url1, $url2);
+        $this->assertEquals("http://ulko.com/", (string) $res);
+    }
+
+    /**
+     * @expectedException \Madfox\WebCrawler\Exception\InvalidArgumentException
+     */
     public function testMergeTwoString()
     {
          $url1 = "Baltica";
+         $url2 = "http://ulko.com//";
+
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com/Baltica", (string) $res);
+
+         $url1 = "//Baltica";
          $url2 = "http://ulko.com//";
 
          $res = $this->factory->merge($url1, $url2);
@@ -42,6 +82,10 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
          $res = $this->factory->merge($url1, $url2);
          $this->assertEquals("http://ulko.com/path/to/res", (string) $res);
 
+         $url1 = "javascript:void(0)";
+         $url2 = "http://ulko.com/";
+         $res = $this->factory->merge($url1, $url2);
+         $this->assertEquals("http://ulko.com/", (string) $res);
     }
 
     private function getUrl($url)
