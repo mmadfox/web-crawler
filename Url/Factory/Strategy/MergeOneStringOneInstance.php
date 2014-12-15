@@ -2,25 +2,32 @@
 namespace Madfox\WebCrawler\Url\Factory\Strategy;
 
 use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\Url\Utils\UrlUtil;
 
 class MergeOneStringOneInstance extends AbstractMerge
 {
+    /**
+     * @param string|Url $url1
+     * @param string|Url $url2
+     * @return bool
+     */
     public function valid($url1, $url2)
     {
         return (is_string($url1) && $url2 instanceof Url);
     }
 
+    /**
+     * @param string $url1
+     * @param Url $url2
+     * @return string
+     */
     public function build($url1, $url2)
     {
+        $url1 = UrlUtil::normalizeURL($url1);
         $parts = $this->parseUrl($url1);
 
         $components = [];
         $meta = $this->getUrlMetaMethods();
-
-        if (strpos($url1, "//") === 0) {
-            $parts['path'] = $parts['host'] . $parts['path'];
-            unset($parts['host']);
-        }
 
         foreach ($meta as $method => $key) {
             $val = call_user_func([$url2, $method]);
@@ -28,10 +35,6 @@ class MergeOneStringOneInstance extends AbstractMerge
             if (in_array($key, ['scheme', 'host', 'port' , 'user', 'password'])) {
                 $components[$key] = $val;
             } else {
-                if ($key == 'path' && isset($parts['path'])) {
-                    $parts[$key] = $this->trimPath($parts[$key]);
-                }
-
                 if (!isset($parts[$key])) {
                     $components[$key] = $val;
                 } else {
@@ -40,7 +43,8 @@ class MergeOneStringOneInstance extends AbstractMerge
             }
         }
 
-        $url = $this->buildQuery($components);
+        $url = UrlUtil::buildUrl($components);
+
         return $url;
     }
 }

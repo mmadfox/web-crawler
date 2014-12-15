@@ -96,7 +96,7 @@ class UrlUtil
         }
         if(isset($url['host']))
         {
-            $url['host'] = strtolower($url['host']);
+            //$url['host'] = strtolower($url['host']);
             // Seems like a valid domain, properly validation should be made in higher layers.
             if(preg_match("/[a-z]+\Z/", $url['host']))
             {

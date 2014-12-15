@@ -2,6 +2,7 @@
 namespace Madfox\WebCrawler\Url\Factory\Strategy;
 
 use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\Url\Utils\UrlUtil;
 
 class MergeTwoInstance extends AbstractMerge
 {
@@ -29,11 +30,6 @@ class MergeTwoInstance extends AbstractMerge
             $val2 = call_user_func(array($url2, $method));
             $val1 = call_user_func(array($url1, $method));
 
-            //TODO JOIN PATH && JOIN QUERY
-            /*if ($key == "path") {
-                $val1 = rtrim(str_replace(basename($val1), '', $val2), '/') . '/' . ltrim($val1, '/');
-            }*/
-
             if (empty($val1)) {
                 $components[$key] = $val2;
             } else {
@@ -41,7 +37,7 @@ class MergeTwoInstance extends AbstractMerge
             }
         }
 
-        $url = $this->buildQuery($components);
+        $url = UrlUtil::buildUrl($components);
 
         return $url;
     }
