@@ -19,10 +19,11 @@ class UrlFactory
 
     /**
      * @param string $url
+     * @param string|Url $url2
      * @return Url
      * @throws \Madfox\WebCrawler\Exception\InvalidArgumentException
      */
-    public function create($url)
+    public function create($url, $url2 = null)
     {
         return new Url($url);
     }
