@@ -1,6 +1,8 @@
 <?php
 namespace Madfox\WebCrawler\Url\Factory\Strategy;
 
+use Madfox\WebCrawler\Url\Utils\UrlUtil;
+
 abstract class AbstractMerge implements StrategyInterface
 {
     public function valid($url1, $url2)
@@ -38,18 +40,18 @@ abstract class AbstractMerge implements StrategyInterface
     }
 
     /**
-     * @param array $components
-     * @return string
+     * @param  string $url
+     * @return bool
      */
-    protected function buildQuery(array $components = [])
+    protected function validScheme($url)
     {
-        return ((isset($components['scheme'])) ? $components['scheme'] . '://' : '')
-            .((isset($components['user'])) ? $components['user'] . ((isset($components['pass'])) ? ':' . $components['pass'] : '') .'@' : '')
-            .((isset($components['host'])) ? $components['host'] : '')
-            .((isset($components['port'])) ? ':' . $components['port'] : '')
-            .((isset($components['path'])) ? $components['path'] : '')
-            .((isset($components['query'])) ? '?' . $components['query'] : '')
-            .((isset($components['fragment'])) ? '#' . $components['fragment'] : '');
+        $scheme = UrlUtil::detectSchema($url);
+
+        if ($scheme == 'http' || $scheme == 'https' || empty($scheme)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -58,14 +60,14 @@ abstract class AbstractMerge implements StrategyInterface
     protected function getUrlMetaMethods()
     {
         return  [
-            'getScheme'      => 'scheme',
-            'getHostname'    => 'host',
-            'getPort'        => 'port',
-            'getUser'        => 'user',
-            'getPassword'    => 'password',
-            'getPath'        => 'path',
-            'getQueryString' => 'query',
-            'getFragment'    => 'fragment'
+            'scheme'      => 'scheme',
+            'host'        => 'host',
+            'port'        => 'port',
+            'user'        => 'user',
+            'password'    => 'password',
+            'path'        => 'path',
+            'query'       => 'query',
+            'fragment'    => 'fragment'
         ];
     }
 }

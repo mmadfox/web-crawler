@@ -31,7 +31,7 @@ class Site
     {
         $this->url = $url;
         $this->routeCollection = new RouteCollection();
-        $this->id = md5($url->getHostname());
+        $this->id = md5($url->host());
     }
 
     public function id()

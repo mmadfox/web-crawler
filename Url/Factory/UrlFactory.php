@@ -19,13 +19,18 @@ class UrlFactory
 
     /**
      * @param string $url
-     * @param string|Url $url2
+     * @param string|Url $src
      * @return Url
      * @throws \Madfox\WebCrawler\Exception\InvalidArgumentException
+     * @throws \Madfox\WebCrawler\Exception\RuntimeException if the strategy class not found
      */
-    public function create($url, $url2 = null)
+    public function create($url, $src = null)
     {
-        return new Url($url);
+        if (null === $src) {
+            return new Url($url);
+        } else {
+            return $this->merge($url, $src);
+        }
     }
 
     /**
@@ -100,6 +105,8 @@ class UrlFactory
 
         $url = $instance->build($url1, $url2);
 
-        return new Url($url);
+        return $url instanceof Url
+               ? $url
+               : new Url($url);
     }
 }

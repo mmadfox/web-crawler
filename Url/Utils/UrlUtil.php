@@ -58,12 +58,32 @@ class UrlUtil
     }
 
     /**
+     * @param array $components
+     * @return string
+     */
+    public static function buildUrl(array $components = [])
+    {
+        return ((isset($components['scheme']) && !empty($components['scheme'])) ? $components['scheme'] . '://' : '')
+        .((isset($components['user']) && !empty($components['user']) ) ? $components['user'] . ((isset($components['pass'])) ? ':' . $components['pass'] : '') .'@' : '')
+        .((isset($components['host']) && !empty($components['host'])) ? $components['host'] : '')
+        .((isset($components['port']) && !empty($components['port'])) ? ':' . $components['port'] : '')
+        .((isset($components['path']) && !empty($components['path'])) ? '/' .ltrim($components['path'], "/") : '')
+        .((isset($components['query']) && !empty($components['query'])) ? '?' . $components['query'] : '')
+        .((isset($components['fragment']) && !empty($components['fragment'])) ? '#' . $components['fragment'] : '');
+    }
+
+    /**
      * @param string $url
      * @return string
      */
     public static function normalizeURL($url)
     {
         $newUrl = "";
+
+        if (strpos($url, "://") === 0) {
+            $url = str_replace("://", "/", $url);
+        }
+
         $url = parse_url($url);
         $defaultSchemes = array("http" => 80, "https" => 443);
         if(isset($url['scheme']))
