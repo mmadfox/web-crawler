@@ -11,9 +11,9 @@ class UrlFactory
      * @var array
      */
     private $strategyClasses = [
+        'MergeOneStringOneInstance'  =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeOneStringOneInstance",
         'MergeTwoInstance'           =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeTwoInstance",
         'MergeTwoString'             =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeTwoString",
-        'MergeOneStringOneInstance'  =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeOneStringOneInstance",
         'MergeDafault'               =>  "\\Madfox\\WebCrawler\\Url\\Factory\\Strategy\\MergeDefault",
     ];
 

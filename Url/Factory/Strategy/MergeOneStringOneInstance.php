@@ -31,15 +31,11 @@ class MergeOneStringOneInstance extends AbstractMerge
 
         foreach ($meta as $method => $key) {
             $val = call_user_func([$url2, $method]);
-            
-            if (in_array($key, ['scheme', 'host', 'port' , 'user', 'password'])) {
+
+            if (!isset($parts[$key])) {
                 $components[$key] = $val;
             } else {
-                if (!isset($parts[$key])) {
-                    $components[$key] = $val;
-                } else {
-                    $components[$key] = $parts[$key];
-                }
+                $components[$key] = $parts[$key];
             }
         }
 
