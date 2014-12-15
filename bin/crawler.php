@@ -16,13 +16,6 @@ $console
 
           $output->writeln("Run....");
           $crawler = new Crawler();
-          $crawler->setQueue(new \Madfox\WebCrawler\Queue\Queue(new \Madfox\WebCrawler\Queue\Adapter\PhpAMQPAdapter(
-              'foodbook.guru',
-              5672,
-              'foodbook',
-              'rabbitmq',
-              '/'
-          )));
 
           $crawler->site("http://ulkotours.com/");
           $crawler->site("http://www.visitsaintpetersburg.com/");
