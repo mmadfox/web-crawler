@@ -12,6 +12,7 @@ class UrlMatcher
      * @var ParserInterface
      */
     private $parser;
+
     /**
      * @var \Madfox\WebCrawler\Url\Url;
      */

@@ -25,20 +25,11 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
         $res = $this->factory->merge($url1, $url2);
         $this->assertEquals("http://ulko.com/Baltica/Confirm-Url/", (string) $res);
 
-        $url1 = "mailto:serg@lis.ya";
-        $url2 = new Url("http://ulko.com/");
-        $res = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://ulko.com/", (string) $res);
-
         $url1 = "//Baltica/Confirm-Url/";
         $url2 = new Url("http://ulko.com/");
         $res = $this->factory->merge($url1, $url2);
         $this->assertEquals("http://ulko.com/Baltica/Confirm-Url/", (string) $res);
 
-        $url1 = "javascript:void(0)";
-        $url2 = new Url("http://ulko.com/");
-        $res = $this->factory->merge($url1, $url2);
-        $this->assertEquals("http://ulko.com/", (string) $res);
     }
 
     /**

@@ -43,6 +43,16 @@ class Url
 
     }
 
+    public function equal(Url $url)
+    {
+        return $this->getId() === $url->getId();
+    }
+
+    public function equalHost(Url $url)
+    {
+        return $this->host() == $url->host();
+    }
+
     public function host()
     {
         return $this->components['host'];
@@ -81,6 +91,17 @@ class Url
     public function fragment()
     {
         return $this->components['fragment'];
+    }
+
+    public function resource()
+    {
+        $components = $this->components;
+
+        foreach (['scheme', 'host', 'port', 'user', 'password'] as $key) {
+            unset($components[$key]);
+        }
+
+        return UrlUtil::buildUrl($components);
     }
 
     /**

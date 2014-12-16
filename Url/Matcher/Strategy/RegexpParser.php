@@ -16,7 +16,11 @@ class RegexpParser implements ParserInterface
         $return = [];
 
         if ($match && isset($match[2])) {
-            $return = $match[2];
+            foreach ($match[2] as $link) {
+                if (!in_array($link, $return)) {
+                    array_push($return, $link);
+                }
+            }
         }
 
         return $return;
