@@ -2,7 +2,7 @@
 namespace Madfox\WebCrawler\Queue;
 
 use Buzz\Exception\InvalidArgumentException;
-use Madfox\WebCrawler\Site\Url;
+use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\Queue\Adapter\AdapterInterface;
 
 class Queue implements QueueInterface
@@ -11,6 +11,11 @@ class Queue implements QueueInterface
      * @var AdapterInterface
      */
     private $adapter;
+
+    public function registerChannel($channelName)
+    {
+
+    }
 
     /**
      * @param AdapterInterface $adapter
@@ -24,7 +29,7 @@ class Queue implements QueueInterface
      * @param Url $url
      * @return mixed
      */
-    public function enqueue(Url $url)
+    public function enqueue(Url $url, $channelName = null)
     {
         $string = $url->toString();
         return $this->adapter->enqueue($string);
@@ -33,7 +38,7 @@ class Queue implements QueueInterface
     /**
      * @return Url | null
      */
-    public function dequeue()
+    public function dequeue($channelName = null)
     {
         $string = $this->adapter->dequeue();
         $url = null;
@@ -50,7 +55,7 @@ class Queue implements QueueInterface
     /**
      * @return mixed
      */
-    public function purge()
+    public function purge($channelName = null)
     {
         $this->adapter->purge();
     }
@@ -59,7 +64,7 @@ class Queue implements QueueInterface
      * @param Url $url
      * @return mixed
      */
-    public function ack(Url $url)
+    public function ack(Url $url, $channelName = null)
     {
         $this->adapter->ack($url->getId());
     }
