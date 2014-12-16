@@ -13,7 +13,7 @@ class RegexpParser implements ParserInterface
     public function parse($html)
     {
         preg_match_all(self::REGEXP, $html, $match);
-        $return = $match[2];
+        $return = isset($match[2]) ? $match[2] : [];
 
         return $return;
     }

@@ -41,56 +41,96 @@ class Url
 
     }
 
+    /**
+     * @param Url $url
+     * @return bool
+     */
     public function equal(Url $url)
     {
         return $this->getId() === $url->getId();
     }
 
+    /**
+     * @param Url $url
+     * @return bool
+     */
     public function equalHost(Url $url)
     {
-        return $this->host() == $url->host();
+        $replace = ['www.'];
+
+        $host1 = trim(str_replace($replace, '', (string) $this->host()));
+        $host2 = trim(str_replace($replace, '', (string) $url->host()));
+
+        return $host1 === $host2;
     }
 
+    /**
+     * @return string|null
+     */
     public function host()
     {
         return $this->components['host'];
     }
 
+    /**
+     * @return string|null
+     */
     public function scheme()
     {
         return $this->components['scheme'];
     }
 
+    /**
+     * @return string|null
+     */
     public function port()
     {
         return $this->components['port'];
     }
 
+    /**
+     * @return string|null
+     */
     public function user()
     {
         return $this->components['user'];
     }
 
+    /**
+     * @return string|null
+     */
     public function password()
     {
         return $this->components['password'];
     }
 
+    /**
+     * @return string|null
+     */
     public function query()
     {
         return $this->components['query'];
     }
 
+    /**
+     * @return string|null
+     */
     public function path()
     {
         return $this->components['path'];
     }
 
+    /**
+     * @return string|null
+     */
     public function fragment()
     {
         return $this->components['fragment'];
     }
 
+    /**
+     * @return string
+     */
     public function hostname()
     {
         $components = $this->components;
@@ -102,6 +142,9 @@ class Url
         return UrlUtil::buildUrl($components);
     }
 
+    /**
+     * @return string
+     */
     public function resource()
     {
         $components = $this->components;
