@@ -44,14 +44,10 @@ class UrlUtil
     public static function detectSchema($url)
     {
         $url = trim((string) $url);
+
         $schema = substr($url, 0, strpos($url, ":"));
-
-        if (empty($schema)) {
-            $schema = 'http';
-        }
-
         $detectSchema = end(array_filter(self::$schemas, function($s) use($schema) {
-            return $s == $schema;
+             return $s == $schema;
         }));
 
         return $detectSchema;

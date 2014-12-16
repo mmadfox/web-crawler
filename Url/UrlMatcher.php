@@ -28,18 +28,89 @@ class UrlMatcher
      */
     public function match(Url $url, $html)
     {
-        $links = (array) $this->parse($html);
+        $links = (array)$this->parse($html);
         $filtered = [];
 
         foreach ($links as $link) {
-            $scheme = UrlUtil::detectSchema($link);
+            if ($this->skipEmpty($link)
+             || $this->skipFragment($link)
+             || $this->skipInvalidScheme($link)
+             || $this->skipSuffixes($link)
+            ) {
+                continue;
+            }
 
-            if (empty($scheme) || $scheme == 'http' || $scheme == 'https') {
-                $filtered[] = $link;
+            $link = $this->filterPath($link);
+
+            if (!in_array($link, $filtered)) {
+                array_push($filtered, $link);
             }
         }
 
         return new Cursor($url, $filtered);
+    }
+
+    /**
+     * @param string $link
+     * @return string|null
+     */
+    protected function filterPath($link)
+    {
+        $scheme = UrlUtil::detectSchema($link);
+
+        if (empty($scheme)) {
+            $link = "/" . ltrim($link, "/");
+        }
+
+        return $link;
+    }
+
+    /**
+     * @param string $link
+     * @return bool
+     */
+    protected function skipSuffixes($link)
+    {
+        if (preg_match('/\.(pdf|gif|GIF|jpg|JPG|png|PNG|ico|ICO|css|CSS|sit|SIT|eps|EPS|wmf|WMF|zip|ZIP|ppt|PPT|mpg|MPG|xls|XLS|gz|GZ|rpm|RPM|tgz|TGZ|mov|MOV|exe|EXE|jpeg|JPEG|bmp|BMP|js|JS)(\?|&)*/', $link)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $link
+     * @return bool
+     */
+    protected function skipFragment($link)
+    {
+        return strpos("#", $link) === 0;
+    }
+
+    /**
+     * @param string $link
+     * @return bool
+     */
+    protected function skipEmpty($link)
+    {
+        return empty($link);
+    }
+
+    /**
+     * @param string $link
+     * @return bool
+     */
+    protected function skipInvalidScheme($link)
+    {
+        $scheme = UrlUtil::detectSchema($link);
+
+        if  (!empty($scheme) && $scheme != 'http' && $scheme != 'https') {
+            return true;
+        } else if (strpos($link, "//") === 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
