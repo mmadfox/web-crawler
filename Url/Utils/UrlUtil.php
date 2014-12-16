@@ -34,7 +34,8 @@ class UrlUtil
         'ed2k',
         'market',
         'steam',
-        'bitcoin'
+        'bitcoin',
+        'javascript'
     ];
 
     /**
@@ -44,8 +45,8 @@ class UrlUtil
     public static function detectSchema($url)
     {
         $url = trim((string) $url);
-
         $schema = substr($url, 0, strpos($url, ":"));
+
         $detectSchema = end(array_filter(self::$schemas, function($s) use($schema) {
              return $s == $schema;
         }));
