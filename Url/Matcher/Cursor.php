@@ -23,37 +23,55 @@ class Cursor implements \Iterator, \Countable
         $this->urlFactory = new UrlFactory();
     }
 
+    /**
+     * @return int
+     */
     public function count()
     {
         return count($this->links);
     }
 
+    /**
+     * @return Url
+     */
     public function current()
     {
         $url = $this->links[$this->index];
 
         try {
-            return $this->urlFactory->merge($url, $this->url);
+            return $this->urlFactory->merge($url, $this->url->hostname());
         } catch (InvalidArgumentException $e) {
-
+            return $this->url;
         }
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->links[$this->index]);
     }
 
+    /**
+     * @return void
+     */
     public function rewind()
     {
         $this->index = 0;
     }
 
+    /**
+     * @return int
+     */
     public function key()
     {
         return $this->index;
     }
 
+    /**
+     * @return void
+     */
     public function next()
     {
         $this->index++;

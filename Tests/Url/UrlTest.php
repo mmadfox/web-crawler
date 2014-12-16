@@ -15,10 +15,10 @@ class UrlTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("http://google.com/?index=1", (string) $url);
 
         $url = new Url("http://google.com////?index=1#fragment");
-        $this->assertEquals("http://google.com/?index=1", (string) $url);
+        $this->assertEquals("http://google.com/?index=1#fragment", (string) $url);
 
         $url = new Url("https://google.com////????index=1#fragment");
-        $this->assertEquals("https://google.com/????index=1", (string) $url);
+        $this->assertEquals("https://google.com/????index=1#fragment", (string) $url);
 
     }
 

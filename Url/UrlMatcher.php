@@ -41,6 +41,7 @@ class UrlMatcher
             }
 
             $link = $this->filterPath($link);
+            $link = $this->filterFragment($link);
 
             if (!in_array($link, $filtered)) {
                 array_push($filtered, $link);
@@ -60,6 +61,18 @@ class UrlMatcher
 
         if (empty($scheme)) {
             $link = "/" . ltrim($link, "/");
+        }
+
+        return $link;
+    }
+
+    protected function filterFragment($link)
+    {
+        $pos = strrpos($link, "#");
+
+        if ($pos !== false) {
+            $offset = strlen($link) - $pos;
+            $link = substr($link, 0, -$offset);
         }
 
         return $link;

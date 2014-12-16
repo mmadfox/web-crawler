@@ -20,9 +20,7 @@ class Url
              throw new InvalidArgumentException(sprintf('The URL "%s" is invalid.', $url));
          }
 
-         $url = UrlUtil::normalizeURL($url);
          $this->url = $url;
-
          $components = parse_url($url);
 
          if (false === $components) {
@@ -91,6 +89,17 @@ class Url
     public function fragment()
     {
         return $this->components['fragment'];
+    }
+
+    public function hostname()
+    {
+        $components = $this->components;
+
+        foreach (['path', 'query', 'fragment'] as $key) {
+            unset($components[$key]);
+        }
+
+        return UrlUtil::buildUrl($components);
     }
 
     public function resource()
