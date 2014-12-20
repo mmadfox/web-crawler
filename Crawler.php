@@ -2,8 +2,6 @@
 namespace Madfox\WebCrawler;
 
 use Madfox\WebCrawler\Exception\LogicException;
-use Madfox\WebCrawler\Exception\RuntimeException;
-use Madfox\WebCrawler\Queue\Adapter\MemoryAdapter;
 use Madfox\WebCrawler\Queue\Queue;
 use Madfox\WebCrawler\Queue\QueueInterface;
 use Madfox\WebCrawler\Site\Site;
@@ -33,7 +31,7 @@ class Crawler
     public function getQueue()
     {
         if (null === $this->queue) {
-           $this->queue = new Queue(new MemoryAdapter());
+           $this->queue = new Queue();
         }
 
         return $this->queue;
@@ -46,6 +44,7 @@ class Crawler
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
+
         return $queue;
     }
 
@@ -113,74 +112,10 @@ class Crawler
             if (null === $url) {
                 sleep(20);
             } else {
-                $page = $site->getPage($url);
+                $page = $site->page($url);
+
+
             }
-        }
-    }
-
-    public function runOld()
-    {
-        if ($this->isRunning()) {
-            return;
-        }
-
-        $this->prepareRun();
-        $this->running = true;
-
-        while ($this->isRunning()) {
-            echo "Старт < ========= > \n";
-
-            $url = $this->getQueue()->dequeue();
-
-            if (null === $url) {
-                echo "Очередь пустая. Спим 20sec \n";
-                sleep(10);
-            } else {
-
-                echo "Получили урл из очереди " . $url->getId() . " -> " . $url->toString() . " \n";
-                $site = $this->getSiteCollection()->get($url);
-
-                if ($site) {
-
-                    try {
-                        //$this->getQueue()->ack($url);
-                    } catch(AMQPProtocolChannelException $e) {
-                        echo "AMQPProtocolChannelException \n";
-                    }
-
-
-                    if (isset($this->history[$url->getId()])) {
-                        echo "Visited \n";
-                        continue;
-                    }
-
-                    $this->history[$url->getId()] = $url->toString();
-
-                    echo "Сайт найден -> " . $site->getUrl()->toString() . "\n";
-                    $page = $site->page($url);
-                    echo "Страница " . $page->url() . "\n";
-
-                    if ($site->valid($page)) {
-                        echo "Обработчик найден. Продолжаем работу...  \n";
-                    } else {
-                        echo "Правила для обработки не найдены \n";
-                    }
-
-                    foreach ($page->links() as $link) {
-                        //echo " Ссылка  " . $link . "\n";
-                        $this->getQueue()->enqueue(new Url($link));
-
-                    }
-
-                    echo ".... \n";
-                    sleep(2);
-
-                } else {
-                    echo "Сайт не найден {$site} \n";
-                }
-            }
-
-            sleep(1);
         }
     }
 
@@ -188,7 +123,8 @@ class Crawler
     {
         foreach ($this->getSiteCollection() as $site) {
             $siteUrl = $site->getUrl();
-            $this->getQueue()->enqueue($siteUrl);
+
+            $this->getQueue()->enqueue($siteUrl, "webcrawler." . $siteUrl->host());
         }
     }
 
