@@ -7,9 +7,6 @@ use Madfox\WebCrawler\Url\Url;
 
 class Site
 {
-
-    private $history = [];
-
     /**
      * @var string
      */
@@ -31,12 +28,6 @@ class Site
     {
         $this->url = $url;
         $this->routeCollection = new RouteCollection();
-        $this->id = md5($url->host());
-    }
-
-    public function id()
-    {
-        return $this->id;
     }
 
     /**

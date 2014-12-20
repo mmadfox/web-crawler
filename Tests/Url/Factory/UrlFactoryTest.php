@@ -32,9 +32,6 @@ class UrlFactoryTest extends PHPUnit_Framework_TestCase {
 
     }
 
-    /**
-     * @expectedException \Madfox\WebCrawler\Exception\InvalidArgumentException
-     */
     public function testMergeTwoString()
     {
          $url1 = "Baltica";

@@ -16,6 +16,14 @@ class SiteCollectionTest extends PHPUnit_Framework_TestCase {
         $this->siteCollection = new SiteCollection();
     }
 
+    public function testGetSiteRandom()
+    {
+        $this->siteCollection->add(new Site(new Url("http://google.com")));
+        $this->siteCollection->add(new Site(new Url("http://yandex.ru")));
+        $site = $this->siteCollection->random();
+        $this->assertInstanceOf("Madfox\\WebCrawler\\Site\\Site", $site);
+    }
+
     public function testAddSite()
     {
         $this->siteCollection->add($this->createSite("http://goole.com"));

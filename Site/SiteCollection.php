@@ -41,6 +41,15 @@ class SiteCollection implements \IteratorAggregate, \Countable
     }
 
     /**
+     * @return null|Url
+     */
+    public function random()
+    {
+        $index = array_rand($this->sites, 1);
+        return isset($this->sites[$index]) ? $this->sites[$index] : null;
+    }
+
+    /**
      * @param Url $url
      * @return bool
      */
@@ -63,7 +72,7 @@ class SiteCollection implements \IteratorAggregate, \Countable
      */
     public function remove(Url $url)
     {
-        unset($this->sites[$url->getHostname()]);
+        unset($this->sites[$url->host()]);
     }
 
     /**

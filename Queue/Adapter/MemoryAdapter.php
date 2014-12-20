@@ -17,37 +17,58 @@ class MemoryAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $url
-     * @return bool
+     * @param string $channelName
+     * @return mixed|void
      */
-    public function enqueue($url)
+    public function addChannel($channelName)
     {
-        array_push($this->queue, $url);
+        $this->queue[$channelName] = [];
+
         return true;
     }
 
     /**
-     * @return string
+     * @param string $url
+     * @param string $channelName
+     * @return bool
      */
-    public function dequeue()
+    public function enqueue($url, $channelName)
     {
-        $url = array_pop($this->queue);
-        return $url;
+        array_push($this->queue[$channelName], $url);
+
+        return true;
     }
 
     /**
+     * @param string $channelName
+     * @return string
+     */
+    public function dequeue($channelName)
+    {
+        $return = "";
+
+        if (isset($this->queue[$channelName])) {
+            $return = array_pop($this->queue[$channelName]);
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param string $channelName
      * @return mixed
      */
-    public function purge()
+    public function purge($channelName)
     {
-        $this->queue = [];
+        unset($this->queue[$channelName]);
     }
 
     /**
      * @param string $url
+     * @param null $channelName
      * @return mixed
      */
-    public function ack($url)
+    public function ack($url, $channelName)
     {
 
     }
