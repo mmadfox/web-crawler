@@ -7,14 +7,12 @@
  */
 
 use \Madfox\WebCrawler\Site;
+use Madfox\WebCrawler\Url\Url;
 
 class SiteTest extends PHPUnit_Framework_TestCase {
     public function testEmpty()
     {
-        $site = new Site(new Url('http://ulkotours.com/'));
-        foreach ($site as $page) {
 
-        }
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler;
 
-use Madfox\WebCrawler\Site\Cursor;
+use Madfox\WebCrawler\Page\PageManager;
 use Madfox\WebCrawler\Url\Url;
 
 class Site implements \IteratorAggregate
@@ -10,19 +10,30 @@ class Site implements \IteratorAggregate
      * @var Url
      */
     private $url;
+    private $pageManager;
 
-    public function __construct(Url $url)
+    /**
+     * @param Url $url
+     */
+    public function __construct(Url $url, PageManager $pageManager)
     {
         $this->url = $url;
+        $this->pageManager = $pageManager;
     }
 
+    /**
+     * @return Url
+     */
     public function getUrl()
     {
         return $this->url;
     }
 
+    /**
+     * @return PageIterator|\Traversable
+     */
     public function getIterator()
     {
-         return new Cursor($this);
+         return null;
     }
 }
