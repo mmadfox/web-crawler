@@ -1,6 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Http;
 
+use Madfox\WebCrawler\Exception\LogicException;
 use Madfox\WebCrawler\Http\Transfer\cURL;
 use Madfox\WebCrawler\Http\Transfer\TransferInterface;
 use Madfox\WebCrawler\Url\Url;
@@ -31,7 +32,16 @@ class Client implements ClientInterface
         }
 
         try {
-            return $transfer->get($url);
+            $response = $transfer->get($url);
+
+            if (!$response instanceof Response) {
+                throw new LogicException();
+            }
+
+            return $response;
+
+        } catch(LogicException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new BadRequestException($e->getMessage());
         }
