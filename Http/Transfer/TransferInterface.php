@@ -2,12 +2,13 @@
 namespace Madfox\WebCrawler\Http\Transfer;
 
 use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\Http\Response;
 
 interface TransferInterface
 {
     /**
      * @param string Url $url
-     * @return mixed
+     * @return Response
      */
     public function get(Url $url);
 

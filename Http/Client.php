@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Http;
 
-use Madfox\WebCrawler\Http\Transfer\Curl;
+use Madfox\WebCrawler\Http\Transfer\cURL;
 use Madfox\WebCrawler\Http\Transfer\TransferInterface;
 use Madfox\WebCrawler\Url\Url;
 
@@ -19,7 +19,7 @@ class Client implements ClientInterface
     public function get(Url $url, TransferInterface $transfer = null)
     {
         if (null === $transfer) {
-            $transfer = new Curl();
+            $transfer = new cURL();
         }
 
         if ($this->proxyIsEnabled()) {
