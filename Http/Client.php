@@ -16,6 +16,7 @@ class Client implements ClientInterface
      * @param TransferInterface $transfer
      * @return Response
      * @throws BadRequestException
+     * @throws LogicException
      */
     public function get(Url $url, TransferInterface $transfer = null)
     {
