@@ -44,6 +44,7 @@ class Site implements \IteratorAggregate
     {
         $this->queue = $queue;
         $this->queue->registerChannel($this->url->hostname());
+        $this->queue->enqueue($this->url->hostname(), $this->url);
     }
 
     public function getQueue()
