@@ -69,7 +69,7 @@ class Index implements IndexInterface
     {
         try {
             $document->setId($url->getId());
-            $this->driver->add($url->getId(), $document->serialize());
+            $this->driver->add($url->getId(), serialize($document));
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
