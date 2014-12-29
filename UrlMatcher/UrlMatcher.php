@@ -1,12 +1,13 @@
 <?php
-namespace Madfox\WebCrawler\Url;
+namespace Madfox\WebCrawler\UrlMatcher;
 
 use Madfox\WebCrawler\Url\Matcher\Cursor;
 use Madfox\WebCrawler\Url\Matcher\ParserInterface;
-use Madfox\WebCrawler\Url\Matcher\Strategy\RegexpParser;
-use Madfox\WebCrawler\Url\Utils\UrlUtil;
+use Madfox\WebCrawler\Url\UrlUtil;
+use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\UrlMatcher\Strategy\RegexpParser;
 
-class UrlMatcher
+class UrlMatcher implements UrlMatcherInterface
 {
     /**
      * @var ParserInterface
@@ -23,12 +24,12 @@ class UrlMatcher
 
     /**
      * @param Url $url
-     * @param string $html
+     * @param string $content
      * @return \Madfox\WebCrawler\Url\Matcher\Cursor
      */
-    public function match(Url $url, $html)
+    public function match(Url $url, $content)
     {
-        $links = (array)$this->parse($html);
+        $links = (array)$this->parse($content);
         $filtered = [];
 
         foreach ($links as $link) {

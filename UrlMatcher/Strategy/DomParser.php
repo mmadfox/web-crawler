@@ -1,7 +1,7 @@
 <?php
-namespace Madfox\WebCrawler\Url\Matcher\Strategy;
+namespace Madfox\WebCrawler\UrlMatcher\Strategy;
 
-use Madfox\WebCrawler\Url\Matcher\ParserInterface;
+use Madfox\WebCrawler\UrlMatcher\ParserInterface;
 
 class DomParser implements ParserInterface
 {

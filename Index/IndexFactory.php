@@ -36,7 +36,7 @@ class IndexFactory
     public function create($driverName = self::INDEX_DRIVER_MEMORY, array $options = [])
     {
         $this->options = $options;
-        $this->$driverName = (string) $driverName;
+        $this->driverName = (string) $driverName;
 
         if ($this->driverNotExists()) {
             throw new InvalidArgumentException(sprintf("Driver %s does not exists", $driverName));

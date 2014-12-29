@@ -2,9 +2,11 @@
 namespace Madfox\WebCrawler\Page;
 
 use Madfox\WebCrawler\Http\Client;
+use Madfox\WebCrawler\Http\ClientInterface;
 use Madfox\WebCrawler\Index\IndexInterface;
 use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\Url\UrlMatcher;
+use Madfox\WebCrawler\UrlMatcher\UrlMatcherInterface;
 
 class PageManager
 {
@@ -22,10 +24,10 @@ class PageManager
     private $urlMatcher;
     /**
      * @param IndexInterface $index
-     * @param Client $httpClient
-     * @param UrlMatcher $urlMatcher
+     * @param ClientInterface $httpClient
+     * @param UrlMatcherInterface $urlMatcher
      */
-    public function __construct(IndexInterface $index, Client $httpClient, UrlMatcher $urlMatcher)
+    public function __construct(IndexInterface $index, ClientInterface $httpClient, UrlMatcherInterface $urlMatcher)
     {
         $this->setIndex($index);
         $this->setHttpClient($httpClient);
@@ -33,10 +35,10 @@ class PageManager
     }
 
     /**
-     * @param UrlMatcher $urlMatcher
+     * @param UrlMatcherInterface $urlMatcher
      * @return PageManager
      */
-    public function setUrlMatcher(UrlMatcher $urlMatcher)
+    public function setUrlMatcher(UrlMatcherInterface $urlMatcher)
     {
         $this->urlMatcher = $urlMatcher;
 
@@ -52,10 +54,10 @@ class PageManager
     }
 
     /**
-     * @param Client $client
+     * @param ClientInterface $client
      * @return PageManager
      */
-    public function setHttpClient(Client $client)
+    public function setHttpClient(ClientInterface $client)
     {
         $this->content = $client;
 
@@ -101,6 +103,7 @@ class PageManager
             $page = $this->index->get($url);
         } else {
             $page = $this->createPage($url);
+
         }
 
         return $page;
@@ -115,7 +118,9 @@ class PageManager
         $page = $this->getRemotePage($url);
 
         if ($page) {
-            $this->index->add($url, $page);
+            if (!$this->index->has($url)) {
+                $this->index->add($url, $page);
+            }
         }
 
         return $page;
@@ -128,18 +133,21 @@ class PageManager
     private function getRemotePage(Url $url)
     {
         try {
-            $response = $this->content->get($url);
+            $response = $this->getHttpClient()->get($url);
             $page = null;
 
-            if ($response->isValid()) {
+            if ($response->getStatusCode() == 200
+            && $response->getContentType() == "text/html") {
                 $links = $this->urlMatcher->match($url, $response->getContent());
                 $page = new Page($url, $links, $response->getContent());
 
                 return $page;
+            } else {
+                return new Page($url);
             }
 
         } catch (\Exception $e) {
-            return null;
+            return new Page($url);
         }
     }
 }

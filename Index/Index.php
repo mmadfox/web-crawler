@@ -5,7 +5,7 @@ use Madfox\WebCrawler\Exception\RuntimeException;
 use Madfox\WebCrawler\Index\Driver\DriverInterface;
 use Madfox\WebCrawler\Url\Url;
 
-class Index
+class Index implements IndexInterface
 {
     /**
      * @var DriverInterface
