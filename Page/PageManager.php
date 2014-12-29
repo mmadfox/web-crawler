@@ -65,7 +65,7 @@ class PageManager
     }
 
     /**
-     * @return Client
+     * @return ClientInterface
      */
     public function getHttpClient()
     {

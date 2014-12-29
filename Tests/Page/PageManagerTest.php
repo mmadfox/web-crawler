@@ -30,11 +30,13 @@ class PageManagerTest extends PHPUnit_Framework_TestCase {
     {
         //create
         $url = new Url("http://phpcrawl.cuab.de/");
-        $page = $this->pageManager->getOrCreatePage($url);
-        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Page\\Page", $page);
+        $page1 = $this->pageManager->getOrCreatePage($url);
+        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Page\\Page", $page1);
         //get
-        $page = $this->pageManager->getOrCreatePage($url);
-        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Page\\Page", $page);
+        $page2 = $this->pageManager->getOrCreatePage($url);
+        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Page\\Page", $page2);
+
+        $this->assertEquals($page2->id(), $page1->id());
     }
 }
  

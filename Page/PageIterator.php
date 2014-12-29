@@ -33,6 +33,16 @@ class PageIterator implements \Iterator
         return $this->index;
     }
 
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    public function getQueue()
+    {
+        return $this->site->getQueue();
+    }
+
     public function rewind()
     {
 
@@ -45,7 +55,7 @@ class PageIterator implements \Iterator
 
     public function valid()
     {
-        $url = $this->site->getQueue()->dequeue($this->getChannelName());
+        $url = $this->getQueue()->dequeue($this->getChannelName());
         $status = false;
 
         if (null !== $url) {

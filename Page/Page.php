@@ -8,10 +8,15 @@ class Page implements DocumentInterface
 {
     private $url;
     private $links = [];
-    private $content;
+    private $content = null;
     private $id;
 
-    public function __construct(Url $url, array $links = [], $content = "")
+    /**
+     * @param Url $url
+     * @param array $links
+     * @param null|string $content
+     */
+    public function __construct(Url $url, array $links = [], $content = null)
     {
         $this->links = $links;
         $this->url   = $url;
@@ -19,36 +24,66 @@ class Page implements DocumentInterface
         $this->id = $url->getId();
     }
 
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->content);
+    }
+
+    /**
+     * @param string|int $id
+     * @return mixed|void
+     */
     public function setId($id)
     {
         $this->id = $id;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function id()
     {
         return $this->id;
     }
 
+    /**
+     * @return Url
+     */
     public function url()
     {
         return $this->url;
     }
 
+    /**
+     * @return array
+     */
     public function links()
     {
          return $this->links;
     }
 
+    /**
+     * @return null|string
+     */
     public function content()
     {
          return $this->content;
     }
 
+    /**
+     * @return string
+     */
     public function serialize()
     {
         return serialize($this->toArray());
     }
 
+    /**
+     * @param string $serialized
+     */
     public function unserialize($serialized)
     {
         $data = unserialize($serialized);
@@ -58,6 +93,9 @@ class Page implements DocumentInterface
         }
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
