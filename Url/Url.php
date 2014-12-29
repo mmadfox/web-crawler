@@ -2,7 +2,7 @@
 namespace Madfox\WebCrawler\Url;
 
 use Madfox\WebCrawler\Exception\InvalidArgumentException;
-use Madfox\WebCrawler\Url\Utils\UrlUtil;
+use Madfox\WebCrawler\Url\UrlUtil;
 
 class Url
 {

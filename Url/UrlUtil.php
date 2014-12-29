@@ -1,5 +1,5 @@
 <?php
-namespace Madfox\WebCrawler\Url\Utils;
+namespace Madfox\WebCrawler\Url;
 
 class UrlUtil
 {

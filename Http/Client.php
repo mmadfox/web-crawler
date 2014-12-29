@@ -2,7 +2,7 @@
 namespace Madfox\WebCrawler\Http;
 
 use Madfox\WebCrawler\Exception\LogicException;
-use Madfox\WebCrawler\Http\Transfer\cURL;
+use Madfox\WebCrawler\Http\Transfer\Buzz;
 use Madfox\WebCrawler\Http\Transfer\TransferInterface;
 use Madfox\WebCrawler\Url\Url;
 
@@ -21,14 +21,14 @@ class Client implements ClientInterface
     public function get(Url $url, TransferInterface $transfer = null)
     {
         if (null === $transfer) {
-            $transfer = new cURL();
+            $transfer = new Buzz();
         }
 
         if ($this->proxyIsEnabled()) {
             $transfer->proxy($this->proxy);
         }
 
-        if ($this->userAgentEnabled()) {
+        if ($this->userAgentIsEnabled()) {
             $transfer->userAgent($this->userAgent);
         }
 
@@ -97,7 +97,7 @@ class Client implements ClientInterface
     /**
      * @return bool
      */
-    public function userAgentEnabled()
+    public function userAgentIsEnabled()
     {
         return null !== $this->userAgent;
     }

@@ -2,7 +2,7 @@
 namespace Madfox\WebCrawler\Url\Factory\Strategy;
 
 use Madfox\WebCrawler\Url\Url;
-use Madfox\WebCrawler\Url\Utils\UrlUtil;
+use Madfox\WebCrawler\Url\UrlUtil;
 
 class MergeTwoInstance extends AbstractMerge
 {
