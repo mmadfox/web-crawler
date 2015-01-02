@@ -1,5 +1,5 @@
 <?php
-namespace Madfox\WebCrawler\Url\Matcher;
+namespace Madfox\WebCrawler\UrlMatcher;
 
 use Madfox\WebCrawler\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Url\Url;

@@ -2,14 +2,13 @@
 namespace Madfox\WebCrawler\Page;
 
 use Madfox\WebCrawler\Site;
-use Madfox\WebCrawler\Url\Url;
 
 class PageIterator implements \Iterator
 {
     /**
-     * @var Url
+     * @var Page
      */
-    private $currentUrl;
+    private $currentPage;
 
     /**
      * @var Site
@@ -26,6 +25,7 @@ class PageIterator implements \Iterator
     public function __construct(Site $site)
     {
         $this->site = $site;
+        $this->next();
     }
 
     public function key()
@@ -45,35 +45,41 @@ class PageIterator implements \Iterator
 
     public function rewind()
     {
-
+        $this->index = 0;
+        $this->getQueue()->purge($this->site->hostname());
     }
     
     public function next()
     {
-        $this->index++;
+        $url = $this->getQueue()->dequeue($this->site->hostname());
+
+        if ($url) {
+            $page = $this->site->getPageManager()->getOrCreatePage($url);
+
+            foreach ($page->links() as $link) {
+                $this->addLinkInQueue($link);
+            }
+
+            $this->currentPage = $page;
+            $this->index++;
+
+        } else {
+            $this->currentPage = null;
+        }
     }
 
     public function valid()
     {
-        $url = $this->getQueue()->dequeue($this->getChannelName());
-        $status = false;
-
-        if (null !== $url) {
-            $this->currentUrl = $url;
-            $status = true;
-        }
-
-        return  $status;
+        return $this->currentPage instanceof Page;
     }
 
     public function current()
     {
-        $page = $this->site->getPageManager()->getOrCreatePage($this->currentUrl);
-        return $page;
+        return $this->currentPage;
     }
 
-    protected function getChannelName()
+    protected function addLinkInQueue($link)
     {
-        return $this->site->getUrl()->hostname();
+        $this->site->getQueue()->enqueue($link, $this->site->getUrl()->hostname());
     }
 }

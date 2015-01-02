@@ -1,9 +1,9 @@
 <?php
 namespace Madfox\WebCrawler;
 
+use Madfox\WebCrawler\Page\PageIterator;
 use Madfox\WebCrawler\Page\PageManager;
 use Madfox\WebCrawler\Queue\QueueInterface;
-use Madfox\WebCrawler\Url\Matcher\Cursor;
 use Madfox\WebCrawler\Url\Url;
 
 class Site implements \IteratorAggregate
@@ -26,8 +26,13 @@ class Site implements \IteratorAggregate
     public function __construct(Url $url, QueueInterface $queue, PageManager $pageManager)
     {
         $this->url = $url;
-        $this->queue = $queue;
+        $this->setQueue($queue);
         $this->setPageManager($pageManager);
+    }
+
+    public function hostname()
+    {
+        return $this->url->hostname();
     }
 
     public function setPageManager(PageManager $pageManager)
@@ -44,7 +49,7 @@ class Site implements \IteratorAggregate
     {
         $this->queue = $queue;
         $this->queue->registerChannel($this->url->hostname());
-        $this->queue->enqueue($this->url->hostname(), $this->url);
+        $this->queue->enqueue($this->url, $this->url->hostname());
     }
 
     public function getQueue()
@@ -65,7 +70,7 @@ class Site implements \IteratorAggregate
      */
     public function getIterator()
     {
-         $cursor = new Cursor($this);
+         $cursor = new PageIterator($this);
 
          return $cursor;
     }

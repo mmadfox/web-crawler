@@ -1,11 +1,9 @@
 <?php
 namespace Madfox\WebCrawler\Page;
 
-use Madfox\WebCrawler\Http\Client;
 use Madfox\WebCrawler\Http\ClientInterface;
 use Madfox\WebCrawler\Index\IndexInterface;
 use Madfox\WebCrawler\Url\Url;
-use Madfox\WebCrawler\Url\UrlMatcher;
 use Madfox\WebCrawler\UrlMatcher\UrlMatcherInterface;
 
 class PageManager
@@ -15,7 +13,7 @@ class PageManager
      */
     private $index;
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $content;
     /**
@@ -140,8 +138,8 @@ class PageManager
             && $response->getContentType() == "text/html") {
                 $links = $this->urlMatcher->match($url, $response->getContent());
                 $page = new Page($url, $links, $response->getContent());
-
                 return $page;
+
             } else {
                 return new Page($url);
             }
