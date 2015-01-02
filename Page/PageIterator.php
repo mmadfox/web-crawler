@@ -57,7 +57,9 @@ class PageIterator implements \Iterator
             $page = $this->site->getPageManager()->getOrCreatePage($url);
 
             foreach ($page->links() as $link) {
-                $this->addLinkInQueue($link);
+                if ($this->site->getUrl()->equalHost($link)) {
+                    $this->addLinkInQueue($link);
+                }
             }
 
             $this->currentPage = $page;
