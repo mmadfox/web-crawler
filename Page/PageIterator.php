@@ -46,25 +46,30 @@ class PageIterator implements \Iterator
     public function rewind()
     {
         $this->index = 0;
-        $this->getQueue()->purge($this->site->hostname());
     }
     
     public function next()
     {
-        $url = $this->getQueue()->dequeue($this->site->hostname());
+        $page = null;
+        $url  = null;
 
-        if ($url) {
-            $page = $this->site->getPageManager()->getOrCreatePage($url);
+        do {
+            $url = $this->getQueue()->dequeue($this->site->hostname());
 
+            if (!$url) {
+                break;
+            }
+
+            $page = $this->site->getPageManager()->createPageIfNotVisited($url);
+        } while($url && is_null($page));
+
+        if ($page) {
             foreach ($page->links() as $link) {
-                if ($this->site->getUrl()->equalHost($link)) {
-                    $this->addLinkInQueue($link);
-                }
+                $this->addLinkInQueue($link);
             }
 
             $this->currentPage = $page;
             $this->index++;
-
         } else {
             $this->currentPage = null;
         }
@@ -80,8 +85,13 @@ class PageIterator implements \Iterator
         return $this->currentPage;
     }
 
+    public function clear()
+    {
+        $this->getQueue()->purge($this->site->hostname());
+    }
+
     protected function addLinkInQueue($link)
     {
-        $this->site->getQueue()->enqueue($link, $this->site->getUrl()->hostname());
+        $this->site->getQueue()->enqueue($link, $this->site->hostname());
     }
 }

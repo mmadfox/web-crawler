@@ -46,7 +46,6 @@ class PageIteratorTest extends PHPUnit_Framework_TestCase {
 
        while ($iterator->valid()) {
            $page = $iterator->current();
-
            array_push($result, $page);
            $iterator->next();
        }

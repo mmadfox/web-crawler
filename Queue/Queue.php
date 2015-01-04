@@ -20,6 +20,7 @@ class Queue implements QueueInterface
      * @var array
      */
     private $registeredChannels = [];
+
     /**
      * @param AdapterInterface $adapter
      */
@@ -42,7 +43,7 @@ class Queue implements QueueInterface
         if (!is_array($channelName)) $channelName = [$channelName];
 
         foreach ($channelName as $cn) {
-            $cn = (string) $cn;
+            $cn = (string)$cn;
 
             $result = $this->adapter->addChannel($cn);
 
@@ -130,6 +131,16 @@ class Queue implements QueueInterface
         $this->registerChannelIfNotExists($channelName);
 
         $this->adapter->ack($url->getId(), $channelName);
+    }
+
+    /**
+     * @param $channelName
+     * @return Urls[]
+     */
+    public function getUrls($channelName = null)
+    {
+        $channelName = $this->channelName($channelName);
+        return $this->adapter->getUrls($channelName);
     }
 
     /**

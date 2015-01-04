@@ -1,8 +1,8 @@
 <?php
 namespace Madfox\WebCrawler\UrlMatcher;
 
-use Madfox\WebCrawler\Url\Matcher\Cursor;
-use Madfox\WebCrawler\Url\Matcher\ParserInterface;
+use Madfox\WebCrawler\UrlMatcher\Cursor;
+use Madfox\WebCrawler\UrlMatcher\ParserInterface;
 use Madfox\WebCrawler\Url\UrlUtil;
 use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\UrlMatcher\Strategy\RegexpParser;
@@ -25,7 +25,7 @@ class UrlMatcher implements UrlMatcherInterface
     /**
      * @param Url $url
      * @param string $content
-     * @return \Madfox\WebCrawler\Url\Matcher\Cursor
+     * @return \Madfox\WebCrawler\UrlMatcher\Cursor
      */
     public function match(Url $url, $content)
     {

@@ -20,9 +20,8 @@ class Site implements \IteratorAggregate
      * @var PageManager
      */
     private $pageManager;
-    /**
-     * @param Url $url
-     */
+
+
     public function __construct(Url $url, QueueInterface $queue, PageManager $pageManager)
     {
         $this->url = $url;
@@ -63,6 +62,14 @@ class Site implements \IteratorAggregate
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * @return Queue\Urls[]
+     */
+    public function getUrlsInQueue()
+    {
+        return $this->getQueue()->getUrls($this->hostname());
     }
 
     /**

@@ -72,4 +72,15 @@ class MemoryAdapter implements AdapterInterface
     {
 
     }
+
+    /**
+     * @param string $channelName
+     * @return array|Urls[]
+     */
+    public function getUrls($channelName)
+    {
+        return isset($this->queue[$channelName])
+            ? $this->queue[$channelName]
+            : [];
+    }
 }

@@ -100,7 +100,8 @@ class PageManager
         if ($this->index->has($url)) {
             $page = $this->index->get($url);
         } else {
-            $page = $this->createPage($url);
+            $page = $this->getRemotePage($url);
+            $this->index->add($url, $page);
 
         }
 
@@ -111,17 +112,15 @@ class PageManager
      * @param Url $url
      * @return Page|null
      */
-    public function createPage(Url $url)
+    public function createPageIfNotVisited(Url $url)
     {
-        $page = $this->getRemotePage($url);
-
-        if ($page) {
-            if (!$this->index->has($url)) {
-                $this->index->add($url, $page);
-            }
+        if ($this->index->has($url)) {
+            return null;
+        } else {
+            $page = $this->getRemotePage($url);
+            $this->index->add($url, $page);
+            return $page;
         }
-
-        return $page;
     }
 
     /**
@@ -134,10 +133,18 @@ class PageManager
             $response = $this->getHttpClient()->get($url);
             $page = null;
 
-            if ($response->getStatusCode() == 200
-            && $response->getContentType() == "text/html") {
-                $links = $this->urlMatcher->match($url, $response->getContent());
+            if (200 == $response->getStatusCode()) {
+                $cursor = $this->urlMatcher->match($url, $response->getContent());
+                $links  = [];
+
+                foreach ($cursor as $link) {
+                    if ($url->equalHost($link)) {
+                        array_push($links, $link);
+                    }
+                }
+
                 $page = new Page($url, $links, $response->getContent());
+
                 return $page;
 
             } else {

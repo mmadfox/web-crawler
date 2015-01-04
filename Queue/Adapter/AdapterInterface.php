@@ -33,4 +33,10 @@ interface AdapterInterface
      * @return mixed
      */
     public function ack($id, $channelName);
+
+    /**
+     * @param string $channelName
+     * @return Urls[]
+     */
+    public function getUrls($channelName);
 }

@@ -12,7 +12,7 @@ class Response implements ResponseInterface
      * @param int $statusCode
      * @param string $contentType
      */
-    public function __construct($content, $statusCode = 200, $contentType = " text/html")
+    public function __construct($content, $statusCode = 200, $contentType = "text/html")
     {
          $this->content = $content;
          $this->statusCode = intval($statusCode);

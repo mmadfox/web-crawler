@@ -35,4 +35,10 @@ interface QueueInterface
      * @return mixed
      */
     public function ack(Url $url, $channelName = null);
+
+    /**
+     * @param null|string $channelName
+     * @return Urls[]
+     */
+    public function getUrls($channelName = null);
 }
