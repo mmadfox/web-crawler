@@ -18,21 +18,11 @@ class MemoryDriver implements DriverInterface
 
     /**
      * @param int|string $id
-     * @param string $data
      * @return mixed|void
      */
-    public function add($id, $data = "")
+    public function add($id)
     {
-        $this->data[$id] = $data;
-    }
-
-    /**
-     * @param $id
-     * @return null|string
-     */
-    public function get($id)
-    {
-        return $this->has($id) ? $this->data[$id] : null;
+        $this->data[$id] = 1;
     }
 
     /**

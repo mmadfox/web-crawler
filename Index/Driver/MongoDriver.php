@@ -31,14 +31,12 @@ class MongoDriver implements DriverInterface
 
     /**
      * @param int|string $id
-     * @param string $data
      * @return mixed|void
      */
-    public function add($id, $data = "")
+    public function add($id)
     {
         $this->getConnection()->insert(array(
-            'uid'   => $id,
-            'data'  => $data
+            'uid'   => $id
         ));
     }
 

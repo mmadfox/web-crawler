@@ -21,25 +21,11 @@ class Index implements IndexInterface
     }
 
     /**
-     * @param Url $url
-     * @return DocumentInterface|null
-     * @throws \Madfox\WebCrawler\Exception\RuntimeException
+     * @param DriverInterface $driver
      */
-    public function get(Url $url)
+    public function setDriver(DriverInterface $driver)
     {
-        try {
-            $document = null;
-            $data = $this->driver->get($url->getId());
-
-            if (!empty($data)) {
-                $document = unserialize($data);
-            }
-
-        } catch (\Exception $exception) {
-            throw new RuntimeException($exception->getMessage());
-        }
-
-        return $document;
+        $this->driver = $driver;
     }
 
     /**
@@ -48,28 +34,22 @@ class Index implements IndexInterface
      */
     public function has(Url $url)
     {
-        $return = false;
-
         try {
-            $return = $this->driver->has($url->getId());
+            return $this->driver->has($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
-
-        return $return;
     }
 
     /**
      * @param Url $url
-     * @param DocumentInterface $document | null
      * @return Index
      * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
-    public function add(Url $url, DocumentInterface $document = null)
+    public function add(Url $url)
     {
         try {
-            $document->setId($url->getId());
-            $this->driver->add($url->getId(), serialize($document));
+            $this->driver->add($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
@@ -80,35 +60,27 @@ class Index implements IndexInterface
     /**
      * @param Url $url
      * @return bool
+     * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
     public function remove(Url $url)
     {
-        $return = false;
-
         try {
-           $return = $this->driver->remove($url->getId());
-
+           return $this->driver->remove($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
-
-        return $return;
     }
 
     /**
      * @return bool
+     * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
     public function purge()
     {
-        $return = false;
-
         try {
-            $return = $this->driver->purge();
-
+            return $this->driver->purge();
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
-
-        return $return;
     }
 } 

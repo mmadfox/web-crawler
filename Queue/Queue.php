@@ -20,6 +20,10 @@ class Queue implements QueueInterface
      * @var array
      */
     private $registeredChannels = [];
+    /**
+     * @var int
+     */
+    private $counter = 0;
 
     /**
      * @param AdapterInterface $adapter
@@ -27,6 +31,17 @@ class Queue implements QueueInterface
     public function __construct(AdapterInterface $adapter = null)
     {
         $this->adapter = is_null($adapter) ? new MemoryAdapter() : $adapter;
+    }
+
+    /**
+     * @param AdapterInterface $adapter
+     * @return Queue
+     */
+    public function setAdapter(AdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+
+        return $this;
     }
 
     /**
@@ -43,7 +58,7 @@ class Queue implements QueueInterface
         if (!is_array($channelName)) $channelName = [$channelName];
 
         foreach ($channelName as $cn) {
-            $cn = (string)$cn;
+            $cn = $this->channelName($cn);
 
             $result = $this->adapter->addChannel($cn);
 
@@ -80,8 +95,17 @@ class Queue implements QueueInterface
         $channelName = $this->channelName($channelName);
         $this->registerChannelIfNotExists($channelName);
         $string = $url->toString();
-
+        $this->counter++;
         return $this->adapter->enqueue($string, $channelName);
+
+    }
+
+    /**
+     * @return int
+     */
+    public function getCounter()
+    {
+        return $this->counter;
     }
 
     /**
@@ -94,13 +118,14 @@ class Queue implements QueueInterface
         $this->registerChannelIfNotExists($channelName);
 
         $string = $this->adapter->dequeue($channelName);
-
         $url = null;
 
         if ($string) {
             try {
                 $url = new Url($string);
+                $this->counter--;
             } catch (InvalidArgumentException $e) {
+                var_dump($e);
                 //TODO trigger event
             }
         }
@@ -114,7 +139,7 @@ class Queue implements QueueInterface
      */
     public function purge($channelName = null)
     {
-        $this->channelName($channelName);
+        $channelName = $this->channelName($channelName);
         $this->registerChannelIfNotExists($channelName);
 
         $this->adapter->purge($channelName);
@@ -153,13 +178,21 @@ class Queue implements QueueInterface
     }
 
     /**
+     * @return int
+     */
+    public function limit()
+    {
+        return $this->adapter->getLimit();
+    }
+
+    /**
      * @param null|string $channelName
      * @return null|string
      */
     private function channelName($channelName = null)
     {
         $channelName = is_null($channelName) ? 'default' : $channelName;
-
+        $channelName = str_replace([":", "/", "http", ".", "-", "www", "//"], "", $channelName);
         return $channelName;
     }
 

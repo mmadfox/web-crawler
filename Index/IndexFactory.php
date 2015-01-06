@@ -5,15 +5,19 @@ use Madfox\WebCrawler\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Index\Driver\DriverInterface;
 use Madfox\WebCrawler\Index\Driver\MongoDriver;
 use Madfox\WebCrawler\Exception\RuntimeException;
+use Madfox\WebCrawler\Index\Driver\SQLite3Driver;
 
 class IndexFactory
 {
     const INDEX_DRIVER_MONGO  = "Mongo";
     const INDEX_DRIVER_MEMORY = "Memory";
+    const INDEX_DRIVER_SQLITE3 = "SQLite3";
+
     /**
      * @var array
      */
     private $driverClasses = [
+        self::INDEX_DRIVER_SQLITE3  => "\\Madfox\\WebCrawler\\Index\\Driver\\SQLite3Driver",
         self::INDEX_DRIVER_MEMORY   => "\\Madfox\\WebCrawler\\Index\\Driver\\MemoryDriver",
         self::INDEX_DRIVER_MONGO    => "\\Madfox\\WebCrawler\\Index\\Driver\\MongoDriver"
     ];
@@ -57,6 +61,21 @@ class IndexFactory
 
         $index = new Index($driver);
         return $index;
+    }
+
+    private function SQLite3Driver()
+    {
+        $defaults = [
+            'filename' => '/tmp/webcrawler_index.db',
+            'name'     => 'webcrawler_index'
+        ];
+
+        $this->options = array_merge($defaults, $this->options);
+
+        return new SQLite3Driver(
+              $this->options['filename'],
+              $this->options['name']
+        );
     }
 
     private function MongoDriver()

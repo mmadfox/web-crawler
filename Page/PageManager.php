@@ -118,7 +118,7 @@ class PageManager
             return null;
         } else {
             $page = $this->getRemotePage($url);
-            $this->index->add($url, $page);
+            $this->index->add($url);
             return $page;
         }
     }
@@ -133,7 +133,7 @@ class PageManager
             $response = $this->getHttpClient()->get($url);
             $page = null;
 
-            if (200 == $response->getStatusCode()) {
+            if (200 == $response->getStatusCode() && $response->getContentType() == "text/html") {
                 $cursor = $this->urlMatcher->match($url, $response->getContent());
                 $links  = [];
 

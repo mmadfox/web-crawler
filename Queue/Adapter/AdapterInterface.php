@@ -39,4 +39,9 @@ interface AdapterInterface
      * @return Urls[]
      */
     public function getUrls($channelName);
+
+    /**
+     * @return int
+     */
+    public function getLimit();
 }

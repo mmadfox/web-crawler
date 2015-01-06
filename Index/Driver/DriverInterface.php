@@ -5,16 +5,10 @@ interface DriverInterface
 {
     /**
      * @param string|int $id
-     * @param string $data
      * @return mixed
      * @throws \ExceptionInterface
      */
-    public function add($id, $data = "");
-
-    /**
-     * @return string
-     */
-    public function get($id);
+    public function add($id);
 
     /**
      * @param int|string $id

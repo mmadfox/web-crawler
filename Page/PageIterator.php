@@ -64,8 +64,10 @@ class PageIterator implements \Iterator
         } while($url && is_null($page));
 
         if ($page) {
-            foreach ($page->links() as $link) {
-                $this->addLinkInQueue($link);
+            if ($this->getQueue()->getCounter() <= 1000) {
+                foreach ($page->links() as $link) {
+                    $this->addLinkInQueue($link);
+                }
             }
 
             $this->currentPage = $page;

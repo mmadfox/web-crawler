@@ -1,10 +1,9 @@
 <?php
 namespace Madfox\WebCrawler\Page;
 
-use Madfox\WebCrawler\Index\DocumentInterface;
 use Madfox\WebCrawler\Url\Url;
 
-class Page implements DocumentInterface
+class Page implements \Serializable
 {
     private $url;
     private $links = [];

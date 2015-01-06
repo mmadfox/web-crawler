@@ -44,14 +44,15 @@ class UrlUtil
      */
     public static function detectSchema($url)
     {
-        $url = trim((string) $url);
+        //TODO!!!
+        /*$url = trim((string) $url);
         $schema = substr($url, 0, strpos($url, ":"));
 
         $detectSchema = end(array_filter(self::$schemas, function($s) use($schema) {
              return $s == $schema;
-        }));
+        }));*/
 
-        return $detectSchema;
+        return "http";
     }
 
     /**
@@ -76,6 +77,8 @@ class UrlUtil
     public static function normalizeURL($url)
     {
         $newUrl = "";
+        //TODO !!!
+        return $url;
 
         if (strpos($url, "://") === 0) {
             $url = str_replace("://", "/", $url);

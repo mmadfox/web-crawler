@@ -13,7 +13,7 @@ class Buzz extends AbstractTransfer implements TransferInterface
 
     public function __construct()
     {
-        $this->client = new \Buzz\Browser(new \Buzz\Client\Curl());
+        //$this->client = new \Buzz\Browser(new \Buzz\Client\Curl());
     }
 
     /**
@@ -22,7 +22,10 @@ class Buzz extends AbstractTransfer implements TransferInterface
      */
     public function get(Url $url)
     {
-        $res = $this->client->get($url->toString());
-        return new Response($res->getContent(), $res->getStatusCode());
+        //$res = $this->client->get($url->toString());
+        //$line = explode(";", $res->getHeader('Content-Type'));
+        //$contentType = isset($line[0]) ? trim($line[0]) : "text/html";
+        $content = file_get_contents($url->toString());
+        return new Response($content, 200);
     }
 }

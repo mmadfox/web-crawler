@@ -41,4 +41,14 @@ interface QueueInterface
      * @return Urls[]
      */
     public function getUrls($channelName = null);
+
+    /**
+     * @return int
+     */
+    public function limit();
+
+    /**
+     * @return int
+     */
+    public function getCounter();
 }

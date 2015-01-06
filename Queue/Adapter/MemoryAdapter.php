@@ -4,6 +4,11 @@ namespace Madfox\WebCrawler\Queue\Adapter;
 class MemoryAdapter implements AdapterInterface
 {
     /**
+     * @var int
+     */
+    private $limit = 100000;
+
+    /**
      * @var array
      */
     private $queue = [];
@@ -71,6 +76,14 @@ class MemoryAdapter implements AdapterInterface
     public function ack($url, $channelName)
     {
 
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
     }
 
     /**
