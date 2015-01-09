@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Index\Driver;
 
-class MongoDriver implements DriverInterface
+class MongoDriver
 {
     private $conn;
     private $host;
@@ -33,11 +33,11 @@ class MongoDriver implements DriverInterface
      * @param int|string $id
      * @return mixed|void
      */
-    public function add($id)
+    public function add($id, $i)
     {
-        $this->getConnection()->insert(array(
-            'uid'   => $id
-        ));
+        $this->getConnection()->update([
+            'uid' => $id,
+        ], ['uid' => $id], ['upsert' => true]);
     }
 
     /**

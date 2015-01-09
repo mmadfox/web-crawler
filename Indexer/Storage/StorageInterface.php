@@ -1,8 +1,14 @@
 <?php
-namespace Madfox\WebCrawler\Index\Driver;
+namespace Madfox\WebCrawler\Indexer\Storage;
 
-interface DriverInterface
+interface StorageInterface
 {
+    /**
+     * @param string $storageName
+     * @return mixed
+     */
+    public function register($storageName);
+
     /**
      * @param string|int $id
      * @return mixed

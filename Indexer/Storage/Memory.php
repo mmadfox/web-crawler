@@ -1,7 +1,7 @@
 <?php
-namespace Madfox\WebCrawler\Index\Driver;
+namespace Madfox\WebCrawler\Indexer\Storage;
 
-class MemoryDriver implements DriverInterface
+class Memory implements StorageInterface
 {
     /**
      * @var array
@@ -9,9 +9,10 @@ class MemoryDriver implements DriverInterface
     private $data = [];
 
     /**
-     * @construct
+     * @param string $storageName
+     * @return mixed|void
      */
-    public function __construct()
+    public function register($storageName)
     {
         $this->data = [];
     }

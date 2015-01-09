@@ -1,41 +1,58 @@
 <?php
-namespace Madfox\WebCrawler\Index;
+namespace Madfox\WebCrawler\Indexer;
 
 use Madfox\WebCrawler\Exception\RuntimeException;
-use Madfox\WebCrawler\Index\Driver\DriverInterface;
+use Madfox\WebCrawler\Indexer\Storage\StorageInterface;
+use Madfox\WebCrawler\Indexer\Storage\Memory;
 use Madfox\WebCrawler\Url\Url;
 
-class Index implements IndexInterface
+class Indexer implements IndexerInterface
 {
     /**
-     * @var DriverInterface
+     * @var StorageInterface
      */
-    private $driver;
+    private $storage;
 
     /**
-     * @param DriverInterface $driver
+     * @param string $storageName
+     * @param StorageInterface $storage
      */
-    public function __construct(DriverInterface $driver)
+    public function __construct($storageName = 'default', StorageInterface $storage = null)
     {
-        $this->driver = $driver;
+        $storage = null === $storage ? new Memory() : $storage;
+        $this->setStorage($storageName, $storage);
     }
 
     /**
-     * @param DriverInterface $driver
+     * @param string $storageName
+     * @param StorageInterface $storage
+     * @return Indexer
      */
-    public function setDriver(DriverInterface $driver)
+    public function setStorage($storageName, StorageInterface $storage)
     {
-        $this->driver = $driver;
+        $this->storage = $storage;
+        $this->storage->register($storageName);
+
+        return $this;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    public function getStorage()
+    {
+        return $this->storage;
     }
 
     /**
      * @param Url $url
      * @return bool
+     * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
     public function has(Url $url)
     {
         try {
-            return $this->driver->has($url->getId());
+            return (bool) $this->storage->has($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
@@ -43,13 +60,13 @@ class Index implements IndexInterface
 
     /**
      * @param Url $url
-     * @return Index
+     * @return Indexer
      * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
     public function add(Url $url)
     {
         try {
-            $this->driver->add($url->getId());
+            $this->storage->add($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
@@ -65,20 +82,20 @@ class Index implements IndexInterface
     public function remove(Url $url)
     {
         try {
-           return $this->driver->remove($url->getId());
+           return $this->storage->remove($url->getId());
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
     }
 
     /**
-     * @return bool
+     * @return mixed
      * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
     public function purge()
     {
         try {
-            return $this->driver->purge();
+            return $this->storage->purge();
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }

@@ -1,9 +1,9 @@
 <?php
-namespace Madfox\WebCrawler\Index;
+namespace Madfox\WebCrawler\Indexer;
 
 use Madfox\WebCrawler\Url\Url;
 
-interface IndexInterface
+interface IndexerInterface
 {
     /**
      * @param Url $url
