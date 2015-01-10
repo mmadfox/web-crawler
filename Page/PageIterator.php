@@ -53,25 +53,31 @@ class PageIterator implements \Iterator
         $page = null;
         $url  = null;
 
-        do {
-            $url = $this->getQueue()->dequeue($this->site->hostname());
+        $url = $this->getQueue()->dequeue($this->site->hostname());
 
-            if (!$url) {
-                break;
-            }
 
-            $page = $this->site->getPageManager()->createPageIfNotVisited($url);
-        } while($url && is_null($page));
 
-        if ($page) {
-            if ($this->getQueue()->getCounter() <= 1000) {
+        //echo "NEXT \n";
+
+        if ($url) {
+            //echo "Get from Q => " . $url->toString() . "\n";
+            $page = $this->site->getPageManager()->createPage($url);
+            $this->getSite()->getIndex()->add($url);
+
+            if ($this->queueIsNotFull()) {
                 foreach ($page->links() as $link) {
-                    $this->addLinkInQueue($link);
+                    //echo "Founded link => " . $link->toString() . "\n";
+                    if (!$this->getSite()->getIndex()->has($link)) {
+                        //echo "Insert to Q => " . $link . "\n";
+                        $this->getSite()->getIndex()->add($link);
+                        $this->addLinkInQueue($link);
+                    }
                 }
             }
 
             $this->currentPage = $page;
             $this->index++;
+            sleep(1);
         } else {
             $this->currentPage = null;
         }
@@ -90,6 +96,11 @@ class PageIterator implements \Iterator
     public function clear()
     {
         $this->getQueue()->purge($this->site->hostname());
+    }
+
+    protected function queueIsNotFull()
+    {
+        return $this->getQueue()->getCounter() < $this->getQueue()->limit();
     }
 
     protected function addLinkInQueue($link)

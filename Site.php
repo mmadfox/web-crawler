@@ -1,8 +1,6 @@
 <?php
 namespace Madfox\WebCrawler;
 
-use Madfox\WebCrawler\Http\ClientInterface;
-use Madfox\WebCrawler\Index\IndexInterface;
 use Madfox\WebCrawler\Page\PageIterator;
 use Madfox\WebCrawler\Page\PageManager;
 use Madfox\WebCrawler\Queue\QueueInterface;
@@ -32,8 +30,8 @@ class Site implements \IteratorAggregate
     public function __construct(Url $url, QueueInterface $queue, PageManager $pageManager)
     {
         $this->url = $url;
-        $this->setQueue($queue);
         $this->setPageManager($pageManager);
+        $this->setQueue($queue);
     }
 
     /**
@@ -50,44 +48,6 @@ class Site implements \IteratorAggregate
     public function setPageManager(PageManager $pageManager)
     {
         $this->pageManager = $pageManager;
-    }
-
-    /**
-     * @param IndexInterface $index
-     * @return Site
-     */
-    public function setIndex(IndexInterface $index)
-    {
-        $this->getPageManager()->setIndex($index);
-
-        return $this;
-    }
-
-    /**
-     * @return IndexInterface
-     */
-    public function getIndex()
-    {
-        return $this->getPageManager()->getIndex();
-    }
-
-    /**
-     * @param ClientInterface $client
-     * @return Site
-     */
-    public function setHttpClient(ClientInterface $client)
-    {
-        $this->getPageManager()->setHttpClient($client);
-
-        return $this;
-    }
-
-    /**
-     * @return ClientInterface
-     */
-    public function getHttpClient()
-    {
-        return $this->getPageManager()->getHttpClient();
     }
 
     /**
@@ -131,9 +91,12 @@ class Site implements \IteratorAggregate
      */
     public function setQueue(QueueInterface $queue)
     {
+        if ($this->queue) {
+            $this->queue->purge($this->url->host());
+        }
+
         $this->queue = $queue;
         $this->queue->registerChannel($this->url->host());
-        $this->queue->enqueue($this->url, $this->url->host());
     }
 
     /**

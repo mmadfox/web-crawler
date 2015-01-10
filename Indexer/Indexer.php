@@ -12,6 +12,10 @@ class Indexer implements IndexerInterface
      * @var StorageInterface
      */
     private $storage;
+    /**
+     * @var bool
+     */
+    private $ignoreContent = false;
 
     /**
      * @param string $storageName
@@ -21,6 +25,16 @@ class Indexer implements IndexerInterface
     {
         $storage = null === $storage ? new Memory() : $storage;
         $this->setStorage($storageName, $storage);
+    }
+
+    /**
+     * @return Indexer
+     */
+    public function enableIgnoreContent()
+    {
+        $this->ignoreContent = true;
+
+        return $this;
     }
 
     /**
@@ -60,18 +74,44 @@ class Indexer implements IndexerInterface
 
     /**
      * @param Url $url
+     * @param \Serializable $content
      * @return Indexer
      * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
-    public function add(Url $url)
+    public function add(Url $url, \Serializable $content = null)
     {
         try {
-            $this->storage->add($url->getId());
+            if ($this->ignoreContent) $content = null;
+
+            $content = null === $content ? "" : serialize($content);
+
+            $this->storage->add($url->getId(),
+                                $url->toString(),
+                                $content);
+
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
         }
 
         return $this;
+    }
+
+    /**
+     * @param Url $url
+     * @return null|Page
+     * @throws RuntimeException
+     */
+    public function get(Url $url)
+    {
+        try {
+            $data = $this->storage->get($url->getId());
+            $page = !empty($data) ? unserialize($data) : null;
+
+            return $page;
+
+        } catch (\Exception $exception) {
+            throw new RuntimeException($exception->getMessage());
+        }
     }
 
     /**

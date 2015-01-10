@@ -4,20 +4,24 @@ namespace Madfox\WebCrawler\Queue;
 use Madfox\WebCrawler\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Exception\RuntimeException;
 use Madfox\WebCrawler\Queue\Adapter\AdapterInterface;
-use Madfox\WebCrawler\Queue\Adapter\PhpAMQPAdapter;
+use Madfox\WebCrawler\Queue\Adapter\AMQPAdapter;
+use Madfox\WebCrawler\Queue\Adapter\SQLite3Adapter;
 
 class QueueFactory
 {
-    const QUEUE_ADAPTER_MEMORY = "Memory";
-    const QUEUE_ADAPTER_PHPAMQP = "PhpAMQP";
+    const QUEUE_ADAPTER_MEMORY  = "Memory";
+    const QUEUE_ADAPTER_AMQP    = "AMQP";
+    const QUEUE_ADAPTER_SQLITE3 = "SQLite3";
+
     /**
      * @var array
      */
     private $adapterClasses = [
         self::QUEUE_ADAPTER_MEMORY  => '\\Madfox\\WebCrawler\\Queue\\Adapter\\MemoryAdapter',
-        self::QUEUE_ADAPTER_PHPAMQP => '\\Madfox\\WebCrawler\\Queue\\Adapter\\PhpAMQPAdapter',
-
+        self::QUEUE_ADAPTER_AMQP    => '\\Madfox\\WebCrawler\\Queue\\Adapter\\AMQPAdapter',
+        self::QUEUE_ADAPTER_SQLITE3 => '\\Madfox\\WebCrawler\\Queue\\Adapter\\SQLite3Adapter'
     ];
+
     /**
      * @var array
      */
@@ -43,7 +47,7 @@ class QueueFactory
             throw new InvalidArgumentException(sprintf("Adapter %s does not exists", $adapterName));
         }
 
-        $adapterFactoryMethod = $this->adapterName . "Adapter";
+        $adapterFactoryMethod = "create" . $this->adapterName . "Adapter";
 
         if (method_exists($this, $adapterFactoryMethod)) {
             $adapter = call_user_func(array($this, $adapterFactoryMethod));
@@ -69,31 +73,23 @@ class QueueFactory
     }
 
     /**
-     * @return PhpAMQPAdapter
+     * @return AMQPAdapter
      */
-    private function PhpAMQPAdapter()
+    private function createAMQPAdapter()
     {
-        $defaults = [
-            'host'     => 'localhost',
-            'port'     => 5672,
-            'user'     => 'guest',
-            'password' => 'guest',
-            'vhost'    => "/",
-            'exchange' => 'webcrawler_exchange',
-            'queue'    => 'webcrawler_queue'
-        ];
-
+        $defaults = ['connectionURI' => ""];
         $this->options = array_merge($defaults, $this->options);
+        return new AMQPAdapter($this->options['connectionURI']);
+    }
 
-        return new PhpAMQPAdapter(
-                 $this->options['host'],
-                 $this->options['port'],
-                 $this->options['user'],
-                 $this->options['password'],
-                 $this->options['vhost'],
-                 $this->options['exchange'],
-                 $this->options['queue']
-            );
+    /**
+     * @return SQLite3Adapter
+     */
+    private function createSQLite3Adapter()
+    {
+        $defaults = ['filepath' => "/tmp/webcrawler.queue.db"];
+        $this->options = array_merge($defaults, $this->options);
+        return new SQLite3Adapter($this->options['filepath']);
     }
 
     private function adapterNotExists()

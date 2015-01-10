@@ -12,7 +12,7 @@ class MongoAdapter implements AdapterInterface
     private $connectionURI;
     private $dbname;
     private $db;
-    private $limit = 10;
+    private $limit = 10000;
     private $channels = [];
 
     /**
@@ -52,15 +52,10 @@ class MongoAdapter implements AdapterInterface
      */
     public function channel($channelName)
     {
-        echo 444;
-
-
-
-        return $channel = $this->getDb()->selectCollection($channelName);
-
         if (isset($this->channels[$channelName])) {
             return $this->channels[$channelName];
         } else {
+            $channel = $this->getDb()->selectCollection($channelName);
             $this->channels[$channelName] = $channel;
             return $channel;
         }

@@ -34,26 +34,6 @@ class PageIteratorTest extends PHPUnit_Framework_TestCase {
        $this->assertInstanceOf("\\Madfox\\WebCrawler\\Page\\Page", $page);
    }
 
-   public function testIterate()
-   {
-       $result = [];
-
-       $this->addUrlToQueue('http://google.com/1');
-       $this->addUrlToQueue('http://google.com/2');
-       $this->addUrlToQueue('http://google.com/3');
-
-       $iterator = $this->site->getIterator();
-
-       while ($iterator->valid()) {
-           $page = $iterator->current();
-           array_push($result, $page);
-           $iterator->next();
-       }
-
-       $this->assertCount(4, $result);
-
-   }
-
    private function addUrlToQueue($url)
    {
        $this->site->getQueue()->enqueue(new Url($url), $this->site->hostname());

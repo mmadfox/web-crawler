@@ -112,6 +112,17 @@ class PageManager
      * @param Url $url
      * @return Page|null
      */
+    public function createPage(Url $url)
+    {
+        $page = $this->getRemotePage($url);
+        $this->index->add($url);
+        return $page;
+    }
+
+    /**
+     * @param Url $url
+     * @return Page|null
+     */
     public function createPageIfNotVisited(Url $url)
     {
         if ($this->index->has($url)) {
@@ -121,6 +132,15 @@ class PageManager
             $this->index->add($url);
             return $page;
         }
+    }
+
+    /**
+     * @param Url $url
+     * @return bool
+     */
+    public function hasVisited(Url $url)
+    {
+        return $this->index->has($url);
     }
 
     /**
@@ -143,8 +163,9 @@ class PageManager
                     }
                 }
 
-                $page = new Page($url, $links, $response->getContent());
+                shuffle($links);
 
+                $page = new Page($url, $links, $response->getContent());
                 return $page;
 
             } else {

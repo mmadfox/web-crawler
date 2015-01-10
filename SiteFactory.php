@@ -10,7 +10,7 @@ use Madfox\WebCrawler\UrlMatcher\UrlMatcher;
 
 class SiteFactory
 {
-    public static function create($url)
+    public function create($url)
     {
         if (is_string($url)) {
             $url = new Url($url);
