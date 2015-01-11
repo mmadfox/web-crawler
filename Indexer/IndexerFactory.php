@@ -1,112 +1,55 @@
 <?php
-namespace Madfox\WebCrawler\Index;
+namespace Madfox\WebCrawler\Indexer;
 
-use Madfox\WebCrawler\Exception\InvalidArgumentException;
-use Madfox\WebCrawler\Index\Driver\DriverInterface;
-use Madfox\WebCrawler\Index\Driver\MongoDriver;
-use Madfox\WebCrawler\Exception\RuntimeException;
-use Madfox\WebCrawler\Index\Driver\SQLite3Driver;
+use Madfox\WebCrawler\Exception\InvalidAddressException;
+use Madfox\WebCrawler\Helper\ConnectionURI;
 
-class IndexFactory
+class IndexerFactory
 {
-    const INDEX_DRIVER_MONGO  = "Mongo";
-    const INDEX_DRIVER_MEMORY = "Memory";
-    const INDEX_DRIVER_SQLITE3 = "SQLite3";
-
-    /**
-     * @var array
-     */
-    private $driverClasses = [
-        self::INDEX_DRIVER_SQLITE3  => "\\Madfox\\WebCrawler\\Index\\Driver\\SQLite3Driver",
-        self::INDEX_DRIVER_MEMORY   => "\\Madfox\\WebCrawler\\Index\\Driver\\MemoryDriver",
-        self::INDEX_DRIVER_MONGO    => "\\Madfox\\WebCrawler\\Index\\Driver\\MongoDriver"
+    private static $map = [
+        'Memory'   => 'memory',
+        'Mongo'    => 'mongodb',
+        'SQLite3'  => 'sqlite'
     ];
 
     /**
-     * @var array
+     * @return array
      */
-    private $options = [];
+    public static function registeredStorage()
+    {
+        return self::$map;
+    }
+
     /**
-     * @var string
+     * @param string $connectionURI
+     *
+     *    memory://webcrawler
+     *    mongodb://user:password@host:port/databaseName
+     *    sqlite://%2Ftmp%2Fdatabase%2Fsqlite%2Fdata.db/databaseName
+     *
+     * @return \Madfox\WebCrawler\Indexer\Storage\StorageInterface
      */
-    private $driverName;
-
-    /**
-     * @param string $driverName
-     * @param array $options
-     * @return Index
-     * @throws RuntimeException
-     */
-    public function create($driverName = self::INDEX_DRIVER_MEMORY, array $options = [])
+    public static function create($connectionURI = "memory://indexer")
     {
-        $this->options = $options;
-        $this->driverName = (string) $driverName;
+        $connectionURI = new ConnectionURI($connectionURI);
+        $storageName = null;
 
-        if ($this->driverNotExists()) {
-            throw new InvalidArgumentException(sprintf("Driver %s does not exists", $driverName));
+        foreach (self::$map as $class => $scheme) {
+            if ($connectionURI->getScheme() == $scheme) {
+                $storageName = $class;
+                break;
+            }
         }
 
-        $driverFactoryMethod = $this->driverName . "Driver";
-
-        if (method_exists($this, $driverFactoryMethod)) {
-            $driver = call_user_func(array($this, $driverFactoryMethod));
-        } else {
-            $class  = $this->getDriverClass();
-            $driver = new $class();
+        if (null === $storageName) {
+            throw new InvalidAddressException("Storage {$connectionURI->getScheme()} not found");
         }
 
-        if (!$driver instanceof DriverInterface) {
-            throw new RuntimeException();
-        }
+        $storageClass = "\\Madfox\\WebCrawler\\Indexer\\Storage\\{$storageName}";
 
-        $index = new Index($driver);
-        return $index;
-    }
+        /* @var \Madfox\WebCrawler\Indexer\Storage\StorageInterface $storage */
+        $storage = new $storageClass($connectionURI->toString());
 
-    private function SQLite3Driver()
-    {
-        $defaults = [
-            'filename' => '/tmp/webcrawler_index.db',
-            'name'     => 'webcrawler_index'
-        ];
-
-        $this->options = array_merge($defaults, $this->options);
-
-        return new SQLite3Driver(
-              $this->options['filename'],
-              $this->options['name']
-        );
-    }
-
-    private function MongoDriver()
-    {
-        $defaults = [
-            'host'     => 'localhost',
-            'port'     => 27017,
-            'user'     => '',
-            'password' => '',
-        ];
-
-        $this->options = array_merge($defaults, $this->options);
-
-        return new MongoDriver(
-            $this->options['host'],
-            $this->options['port'],
-            $this->options['db'],
-            $this->options['collection'],
-            $this->options['user'],
-            $this->options['password']
-        );
-
-    }
-
-    private function driverNotExists()
-    {
-        return !isset($this->driverClasses[$this->driverName]);
-    }
-
-    private function getDriverClass()
-    {
-        return $this->driverClasses[$this->driverName];
+        return $storage;
     }
 }
