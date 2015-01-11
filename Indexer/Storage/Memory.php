@@ -19,11 +19,28 @@ class Memory implements StorageInterface
 
     /**
      * @param int|string $id
+     * @param string $url
+     * @param string $content
      * @return mixed|void
      */
-    public function add($id)
+    public function add($id, $url, $content = null)
     {
-        $this->data[$id] = 1;
+        $this->remove($id);
+
+        $this->data[$id] = [
+            'id'    => $id,
+            'url'   => $url,
+            'data'  => $content
+        ];
+    }
+
+    /**
+     * @param string $id
+     * @return null|string
+     */
+    public function get($id)
+    {
+        return $this->has($id) ? $this->data[$id] : null;
     }
 
     /**
@@ -32,7 +49,7 @@ class Memory implements StorageInterface
      */
     public function has($id)
     {
-        return isset($this->data[$id]) ? true : false;
+        return isset($this->data[$id]);
     }
 
     /**
@@ -42,6 +59,7 @@ class Memory implements StorageInterface
     public function remove($id)
     {
         unset($this->data[$id]);
+        return true;
     }
 
     /**
@@ -50,6 +68,7 @@ class Memory implements StorageInterface
     public function purge()
     {
         $this->data = [];
+        return true;
     }
 
 } 
