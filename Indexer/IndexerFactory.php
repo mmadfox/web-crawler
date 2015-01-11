@@ -22,15 +22,9 @@ class IndexerFactory
 
     /**
      * @param string $connectionURI
-     *
-     *    memory://webcrawler
-     *    mongodb://user:password@host:port/databaseName
-     *    sqlite://%2Ftmp%2Fdatabase%2Fsqlite%2Fdata.db/databaseName
-     *
-     * @param string $storageId
-     * @return \Madfox\WebCrawler\Indexer\Indexer
+     * @return Storage\StorageInterface
      */
-    public static function create($connectionURI = "memory://indexer", $storageId = 'webcrawler_indexer')
+    public static function createStorage($connectionURI)
     {
         $connectionURI = new ConnectionURI($connectionURI);
         $storageName = null;
@@ -50,8 +44,24 @@ class IndexerFactory
 
         /* @var \Madfox\WebCrawler\Indexer\Storage\StorageInterface $storage */
         $storage = new $storageClass($connectionURI->toString());
-        $indexer = new Indexer($storageId, $storage);
 
+        return $storage;
+    }
+
+    /**
+     * @param string $connectionURI
+     *
+     *    memory://webcrawler
+     *    mongodb://user:password@host:port/databaseName
+     *    sqlite://%2Ftmp%2Fdatabase%2Fsqlite%2Fdata.db/databaseName
+     *
+     * @param string $storageId
+     * @return \Madfox\WebCrawler\Indexer\Indexer
+     */
+    public static function create($connectionURI = "memory://indexer", $storageId = 'webcrawler_indexer')
+    {
+        $storage = self::createStorage($connectionURI);
+        $indexer = new Indexer($storageId, $storage);
         return $indexer;
     }
 }
