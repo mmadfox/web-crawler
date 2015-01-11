@@ -25,8 +25,16 @@ class IndexerFactory
      * @return Storage\StorageInterface
      * @throws InvalidArgumentException if storage class not found
      */
-    public static function createStorage($connectionURI)
+    public static function createStorage($connectionURI = null)
     {
+        if (null === $connectionURI) {
+            if (class_exists('\SQLite3')) {
+                $connectionURI = "sqlite://%2Ftmp%2Findexer.db/indexer";
+            } else {
+                $connectionURI = "memory://indexer";
+            }
+        }
+
         $connectionURI = new ConnectionURI($connectionURI);
         $storageName = null;
 
@@ -50,7 +58,7 @@ class IndexerFactory
     }
 
     /**
-     * @param string $connectionURI
+     * @param string|null $connectionURI
      *
      *    memory://webcrawler
      *    mongodb://user:password@host:port/databaseName
@@ -59,7 +67,7 @@ class IndexerFactory
      * @param string $storageId
      * @return \Madfox\WebCrawler\Indexer\Indexer
      */
-    public static function create($connectionURI = "memory://indexer", $storageId = 'webcrawler_indexer')
+    public static function create($connectionURI = null, $storageId = 'webcrawler_indexer')
     {
         $storage = self::createStorage($connectionURI);
         $indexer = new Indexer($storageId, $storage);
