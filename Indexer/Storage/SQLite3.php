@@ -10,15 +10,15 @@ class SQLite3 implements StorageInterface
     /**
      * @var ConnectionURI
      */
-    private $connectionURI;
+    protected  $connectionURI;
     /**
      * @var \SQLite3
      */
-    private $connection;
+    protected $connection;
     /**
      * @var string
      */
-    private $tableName;
+    protected  $tableName;
 
     /**
      * @param string $connectionURI

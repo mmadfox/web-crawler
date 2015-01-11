@@ -7,9 +7,10 @@ use Madfox\WebCrawler\Helper\ConnectionURI;
 class IndexerFactory
 {
     private static $map = [
-        'Memory'   => 'memory',
-        'Mongo'    => 'mongodb',
-        'SQLite3'  => 'sqlite'
+        'Memory'         => 'memory',
+        'Mongo'          => 'mongodb',
+        'SQLite3'        => 'sqlite',
+        'SQLite3Memory'  => 'msqlite'
     ];
 
     /**
