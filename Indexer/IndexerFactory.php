@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Indexer;
 
-use Madfox\WebCrawler\Exception\InvalidAddressException;
+use Madfox\WebCrawler\Exception\InvalidArgumentException;
 use Madfox\WebCrawler\Helper\ConnectionURI;
 
 class IndexerFactory
@@ -23,6 +23,7 @@ class IndexerFactory
     /**
      * @param string $connectionURI
      * @return Storage\StorageInterface
+     * @throws InvalidArgumentException if storage class not found
      */
     public static function createStorage($connectionURI)
     {
@@ -37,7 +38,7 @@ class IndexerFactory
         }
 
         if (null === $storageName) {
-            throw new InvalidAddressException("Storage {$connectionURI->getScheme()} not found");
+            throw new InvalidArgumentException("Storage {$connectionURI->getScheme()} not found");
         }
 
         $storageClass = "\\Madfox\\WebCrawler\\Indexer\\Storage\\{$storageName}";
