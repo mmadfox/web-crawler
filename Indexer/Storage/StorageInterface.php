@@ -13,10 +13,11 @@ interface StorageInterface
      * @param string|int $id
      * @param string $url
      * @param string|null $content
+     * @param string|null $page
      * @return mixed
      * @throws \ExceptionInterface
      */
-    public function add($id, $url, $content = null);
+    public function add($id, $url, $content = null, $page = null);
 
     /**
      * @param int|string $id

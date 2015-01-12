@@ -56,7 +56,7 @@ class SQLite3 implements StorageInterface
     public function register($storageName)
     {
         $this->connection->exec(
-            sprintf("CREATE TABLE IF NOT EXISTS %s (id CHAR (32), url VARCHAR (255), content TEXT, UNIQUE(id) ON CONFLICT REPLACE)",
+            sprintf("CREATE TABLE IF NOT EXISTS %s (id CHAR (32), url VARCHAR (255), content TEXT, page TEXT, UNIQUE(id) ON CONFLICT REPLACE)",
                 $storageName)
         );
 
@@ -79,20 +79,22 @@ class SQLite3 implements StorageInterface
      * @param string|int $id
      * @param string $url
      * @param string|null $content
+     * @param string|null $page
      * @return mixed
      * @throws \ExceptionInterface
      * @throws LogicException if not call SQLite::register()
      */
-    public function add($id, $url, $content = null)
+    public function add($id, $url, $content = null, $page = null)
     {
         $table = $this->getTableName();
 
         $this->getConnection()->exec(
-            sprintf("INSERT OR REPLACE INTO %s ('id', 'url', 'content') VALUES ('%s', '%s', '%s') ",
+            sprintf("INSERT OR REPLACE INTO %s ('id', 'url', 'content', 'page') VALUES ('%s', '%s', '%s', '%s') ",
                 $table,
                 $id,
                 $url,
-                $content
+                $content,
+                $page
             )
         );
     }
@@ -150,7 +152,7 @@ class SQLite3 implements StorageInterface
         );
 
         $data = $result->fetchArray(SQLITE3_ASSOC);
-        return isset($data['content']) ? $data['content'] : "";
+        return isset($data['page']) ? $data['page'] : "";
     }
     
     public function isSupported()

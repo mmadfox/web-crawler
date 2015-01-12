@@ -84,13 +84,14 @@ class Mongo implements StorageInterface
      * @param int|string $id
      * @param string $url
      * @param string|null $content
+     * @param string|null $page
      * @return mixed|void
      */
-    public function add($id, $url, $content = null)
+    public function add($id, $url, $content = null, $page = null)
     {
         $this->getCollection()->update(
             ['uid' => $id],
-            ['uid' => $id, 'url' => $url, 'data' => $content],
+            ['uid' => $id, 'url' => $url, 'data' => $content, 'page' => $page],
             ['upsert' => true]
         );
     }
@@ -108,7 +109,7 @@ class Mongo implements StorageInterface
         ]);
 
         if ($doc) {
-            $return = $doc['data'];
+            $return = $doc['page'];
         }
 
         return $return;

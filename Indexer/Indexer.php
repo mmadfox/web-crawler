@@ -5,6 +5,7 @@ use Madfox\WebCrawler\Exception\RuntimeException;
 use Madfox\WebCrawler\Indexer\Storage\StorageInterface;
 use Madfox\WebCrawler\Indexer\Storage\Memory;
 use Madfox\WebCrawler\Url\Url;
+use Madfox\WebCrawler\Contentable;
 
 class Indexer implements IndexerInterface
 {

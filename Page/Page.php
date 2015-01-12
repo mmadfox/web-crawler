@@ -1,9 +1,10 @@
 <?php
 namespace Madfox\WebCrawler\Page;
 
+use Madfox\WebCrawler\Contentable;
 use Madfox\WebCrawler\Url\Url;
 
-class Page implements \Serializable
+class Page implements Contentable
 {
     private $url;
     private $links = [];

@@ -1,5 +1,5 @@
 <?php
-namespace Madfox\WebCrawler\Indexer;
+namespace Madfox\WebCrawler;
 
 interface Contentable extends \Serializable
 {

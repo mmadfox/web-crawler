@@ -19,7 +19,7 @@
     "require": {
         "php": ">=5.4.0",
         "kriswallsmith/buzz": "dev-master",
-        "symfony/console": "3.0.*@dev",
+        "symfony/event-dispatcher": "2.7.*@dev",
         "videlalvaro/php-amqplib": "2.4.*@dev",
         "arara/process": "dev-master"
     },

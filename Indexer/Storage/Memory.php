@@ -21,16 +21,18 @@ class Memory implements StorageInterface
      * @param int|string $id
      * @param string $url
      * @param string $content
+     * @param string|null $page
      * @return mixed|void
      */
-    public function add($id, $url, $content = null)
+    public function add($id, $url, $content = null, $page = null)
     {
         $this->remove($id);
 
         $this->data[$id] = [
             'id'    => $id,
             'url'   => $url,
-            'data'  => $content
+            'data'  => $content,
+            'page'  => $page
         ];
     }
 
@@ -40,7 +42,7 @@ class Memory implements StorageInterface
      */
     public function get($id)
     {
-        return $this->has($id) ? $this->data[$id] : null;
+        return $this->has($id) ? $this->data[$id]['page'] : null;
     }
 
     /**
