@@ -74,20 +74,19 @@ class Indexer implements IndexerInterface
 
     /**
      * @param Url $url
-     * @param \Serializable $content
+     * @param Contentable $content
      * @return Indexer
      * @throws \Madfox\WebCrawler\Exception\RuntimeException
      */
-    public function add(Url $url, \Serializable $content = null)
+    public function add(Url $url,  Contentable $content = null)
     {
         try {
             if ($this->ignoreContent) $content = null;
 
-            $content = null === $content ? "" : serialize($content);
+            $data = (null === $content ? "" : $content->content());
+            $ser  = (null === $content ? "" : serialize($content));
 
-            $this->storage->add($url->getId(),
-                                $url->toString(),
-                                $content);
+            $this->storage->add($url->getId(), $url->toString(), $data, $ser);
 
         } catch (\Exception $exception) {
             throw new RuntimeException($exception->getMessage());
@@ -98,14 +97,14 @@ class Indexer implements IndexerInterface
 
     /**
      * @param Url $url
-     * @return null|Page
+     * @return null|string
      * @throws RuntimeException
      */
     public function get(Url $url)
     {
         try {
             $data = $this->storage->get($url->getId());
-            $page = !empty($data) ? unserialize($data) : null;
+            $page = !empty($data) ? $data : null;
 
             return $page;
 

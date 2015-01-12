@@ -25,6 +25,12 @@ interface IndexerInterface
     public function remove(Url $url);
 
     /**
+     * @param Url $url
+     * @return mixed
+     */
+    public function get(Url $url);
+
+    /**
      * @return bool
      */
     public function purge();
