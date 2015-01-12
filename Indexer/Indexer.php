@@ -105,7 +105,7 @@ class Indexer implements IndexerInterface
     {
         try {
             $data = $this->storage->get($url->getId());
-            $page = !empty($data) ? $data : null;
+            $page = !empty($data) ? unserialize($data) : null;
 
             return $page;
 

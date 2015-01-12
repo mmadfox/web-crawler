@@ -5,10 +5,9 @@ use Madfox\WebCrawler\Http\ClientInterface;
 use Madfox\WebCrawler\Indexer\IndexerInterface;
 use Madfox\WebCrawler\Page\PageIterator;
 use Madfox\WebCrawler\Queue\QueueInterface;
-use Madfox\WebCrawler\Url\Factory\UrlFactory;
 use Madfox\WebCrawler\Url\Url;
 use Madfox\WebCrawler\UrlMatcher\UrlMatcherInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Madfox\WebCrawler\Page\Page;
 
 class Site implements \IteratorAggregate
 {
@@ -127,6 +126,7 @@ class Site implements \IteratorAggregate
 
         $this->queue = $queue;
         $this->queue->registerChannel($this->url->host());
+        $this->queue->enqueue($this->getUrl(), $this->url->host());
     }
 
     /**
@@ -145,17 +145,6 @@ class Site implements \IteratorAggregate
         return $this->url->hostname();
     }
 
-    /**
-     * @param string $url
-     * @return Index\DocumentInterface|Page\Page|null
-     */
-    public function getPage($url)
-    {
-        $urlFactory = new UrlFactory();
-        $formattedUrl = $urlFactory->merge($url, $this->getUrl());
-
-        return $this->pageManager->getOrCreatePage($formattedUrl);
-    }
 
     /**
      * @param array $urls
@@ -192,42 +181,41 @@ class Site implements \IteratorAggregate
     }
 
     /**
-     * @return void
-     */
-    public function close()
-    {
-        $this->getQueue()->purge($this->url->host());
-        $this->getPageManager()->getIndex()->purge();
-    }
-
-    /**
-     * @param Url $url
+     * @param Url|string $url
      * @return Page|null
      */
-    private function getRemotePage(Url $url)
+    public function getPage($url)
     {
         try {
-            $response = $this->getHttpClient()->get($url);
-            $page = null;
+            if (is_string($url)) {
+                $url = new Url($url);
+            }
 
-            if (200 == $response->getStatusCode()
-            && $response->getContentType() == "text/html") {
-                $cursor = $this->urlMatcher->match($url, $response->getContent());
-                $links = [];
-
-                foreach ($cursor as $link) {
-                    if ($url->equalHost($link)) {
-                        array_push($links, $link);
-                    }
-                }
-
-                shuffle($links);
-
-                $page = new Page($url, $links, $response->getContent());
-                return $page;
-
+            if ($this->getIndexer()->has($url)) {
+                return $this->getIndexer()->get($url);
             } else {
-                return new Page($url);
+                $response = $this->getHttpClient()->get($url);
+                $page = null;
+
+                if (200 == $response->getStatusCode()
+                    && $response->getContentType() == "text/html") {
+                    $cursor = $this->urlMatcher->match($url, $response->getContent());
+                    $links = [];
+
+                    foreach ($cursor as $link) {
+                        if ($url->equalHost($link)) {
+                            array_push($links, $link);
+                        }
+                    }
+
+                    shuffle($links);
+
+                    $page = new Page($url, $links, $response->getContent());
+                    return $page;
+
+                } else {
+                    return new Page($url);
+                }
             }
 
         } catch (\Exception $e) {
