@@ -7,7 +7,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 class AMQPAdapter implements AdapterInterface
 {
     private $connectionURI;
-    private $limit = 20000;
     private $exchange = 'webcrawler_exchange';
     private $ids = [];
 
@@ -121,21 +120,9 @@ class AMQPAdapter implements AdapterInterface
         $channel->basic_ack($id);
     }
 
-    /**
-     * @return int
-     */
-    public function getLimit()
-    {
-         return $this->limit;
-    }
-
     public function close()
     {
         if ($this->connection) {
-            /*foreach ($this->ids as $id => $channelName) {
-                $this->getChannel($channelName)->close();
-            }*/
-
             $this->connection->close();
         }
     }

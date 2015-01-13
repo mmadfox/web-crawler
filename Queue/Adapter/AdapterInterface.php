@@ -34,8 +34,4 @@ interface AdapterInterface
      */
     public function ack($id, $channelName);
 
-    /**
-     * @return int
-     */
-    public function getLimit();
 }

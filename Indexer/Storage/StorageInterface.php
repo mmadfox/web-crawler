@@ -41,4 +41,5 @@ interface StorageInterface
      * @return bool
      */
     public function purge();
+
 } 

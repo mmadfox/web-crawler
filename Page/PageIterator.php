@@ -28,42 +28,52 @@ class PageIterator implements \Iterator
         $this->next();
     }
 
+    /**
+     * @return int
+     */
     public function key()
     {
         return $this->index;
     }
 
+    /**
+     * @return Site
+     */
     public function getSite()
     {
         return $this->site;
     }
 
-    public function getQueue()
-    {
-        return $this->site->getQueue();
-    }
-
+    /**
+     * @return void
+     */
     public function rewind()
     {
         $this->index = 0;
     }
-    
+
+    /**
+     * @return void
+     */
     public function next()
     {
+        $site  = $this->getSite();
+        $queue = $site->getQueue();
+        $indexer = $site->getIndexer();
+        $channelName = $site->getUrl()->host();
+
         $page = null;
         $url  = null;
 
         do {
-            $url = $this->getQueue()->dequeue($this->site->getUrl()->host());
-            if ($url) $page = $this->getSite()->getPage($url);
+            $url = $queue->dequeue($channelName);
+            if ($url) $page = $site->getPage($url);
         } while($url && $page->isEmpty());
 
         if ($page) {
-            if ($this->queueIsNotFull()) {
-                foreach ($page->links() as $link) {
-                    if (!$this->getSite()->getIndexer()->has($link)) {
-                        $this->getSite()->getQueue()->enqueue($link, $this->site->getUrl()->host());
-                    }
+            foreach ($page->links() as $link) {
+                if (!$indexer->has($link)) {
+                    $queue->enqueue($link, $channelName);
                 }
             }
 
@@ -74,29 +84,19 @@ class PageIterator implements \Iterator
         }
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return $this->currentPage instanceof Page;
     }
 
+    /**
+     * @return Page|null
+     */
     public function current()
     {
         return $this->currentPage;
-    }
-
-    public function clear()
-    {
-        $this->getQueue()->purge($this->site->hostname());
-    }
-
-    protected function queueIsNotFull()
-    {
-        $queue = $this->getSite()->getQueue();
-        return $queue->getCounter() < $queue->limit();
-    }
-
-    protected function addLinkInQueue($link)
-    {
-        $this->site->getQueue()->enqueue($link, $this->site->hostname());
     }
 }
