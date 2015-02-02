@@ -1,0 +1,37 @@
+parameters:
+   hostname: "http://site1.com"
+
+services:
+   url:
+      class: Madfox\WebCrawler\Url\Url
+      arguments: ["%hostname%"]
+
+   queue_factory:
+      class: Madfox\WebCrawler\Queue\QueueFactory
+
+   queue:
+      class: Madfox\WebCrawler\Queue\Queue
+      factory: ["@queue_factory", create]
+      arguments: ["Memory", [1,2,3]]
+
+   indexer:
+      class: Madfox\WebCrawler\Indexer\Indexer
+      factory: [Madfox\WebCrawler\Indexer\IndexerFactory, create]
+      arguments: ["memory://indexer"]
+
+   url_matcher.parser:
+      class: Madfox\WebCrawler\UrlMatcher\Strategy\RegexpParser
+
+   url_matcher:
+      class: Madfox\WebCrawler\UrlMatcher\UrlMatcher
+      arguments: ["@url_matcher.parser"]
+
+   http_client:
+      class: Madfox\WebCrawler\Http\Client
+
+   site:
+      class: Madfox\WebCrawler\Site
+      arguments: ["@url", "@queue", "@indexer", "@url_matcher", "@http_client"]
+
+
+

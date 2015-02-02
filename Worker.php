@@ -25,6 +25,22 @@ class Worker implements Action
     }
 
     /**
+     * @return \Madfox\WebCrawler\Site
+     */
+    public function getSite()
+    {
+        return $this->container->get('site');
+    }
+
+    /**
+     * @return string
+     */
+    public function getChannelName()
+    {
+        return $this->getSite()->getUrl()->hostname();
+    }
+
+    /**
      * This is the action to be runned.
      *
      * @param Control $control Process controller.
@@ -35,7 +51,13 @@ class Worker implements Action
     public function execute(Control $control, Context $context)
     {
 
-        $worker = $this;
+        $site = $this->getSite();
+        $site->getQueue()->enqueue($site->getUrl(), $this->getChannelName());
+
+        while ($url = $site->getQueue()->dequeue($this->getChannelName())) {
+
+        }
+        /*$worker = $this;
 
         while(true) {
             $child = new Child(
@@ -51,7 +73,7 @@ class Worker implements Action
             $child->wait();
 
             sleep(mt_rand(1,10));
-        }
+        }*/
     }
 
     /**

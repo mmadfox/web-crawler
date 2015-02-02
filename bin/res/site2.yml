@@ -1,0 +1,18 @@
+parameters:
+   hostname: "http://site1.com"
+
+services:
+   url:
+      class: Madfox\WebCrawler\Url\Url
+      arguments: ["%hostname%"]
+
+   queue_factory:
+      class: Madfox\WebCrawler\Queue\QueueFactory
+
+   queue:
+      class: Madfox\WebCrawler\Queue\Queue
+      factory: ["@queue_factory", create]
+      arguments: ["Memory", [1,2,3]]
+
+
+

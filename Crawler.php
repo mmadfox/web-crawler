@@ -65,6 +65,7 @@ class Crawler
             $container = new ContainerBuilder();
             $config = array();
             $site->load($config, $container);
+
             $worker = new Worker($container);
             $child = new Child($worker, $control);
             $pool->attach($child);
