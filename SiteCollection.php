@@ -55,7 +55,7 @@ class SiteCollection implements \IteratorAggregate, \Countable
      */
     public function has(Url $url)
     {
-        $site = $this->get($url);
+        $site = $this->get($url->host());
         return $site ? true : false;
     }
 

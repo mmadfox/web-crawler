@@ -21,7 +21,11 @@
         "kriswallsmith/buzz": "dev-master",
         "symfony/event-dispatcher": "2.7.*@dev",
         "videlalvaro/php-amqplib": "2.4.*@dev",
-        "arara/process": "dev-master"
+        "arara/process": "dev-master",
+        "symfony/filesystem": "2.7.x-dev",
+        "symfony/dependency-injection": "2.7.x-dev",
+        "symfony/config": "2.7.x-dev",
+        "symfony/yaml": "2.7.x-dev"
     },
 
     "autoload": {
