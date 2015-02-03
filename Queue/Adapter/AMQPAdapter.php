@@ -1,7 +1,7 @@
 <?php
 namespace Madfox\WebCrawler\Queue\Adapter;
 
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class AMQPAdapter implements AdapterInterface
@@ -135,7 +135,8 @@ class AMQPAdapter implements AdapterInterface
            $host     = $this->getComponent('host');
            $port     = (int) $this->getComponent('port');
            $vhost    = $this->getComponent('path', '/');
-           $this->connection = new AMQPConnection($host, $port, $user, $password, $vhost);
+
+           $this->connection = new AMQPSocketConnection($host, $port, $user, $password, $vhost);
         }
 
         return $this->connection;

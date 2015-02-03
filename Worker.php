@@ -1,6 +1,7 @@
 <?php
 namespace Madfox\WebCrawler;
 
+use Madfox\WebCrawler\Url\Url;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Arara\Process\Action\Action,
@@ -14,7 +15,16 @@ class Worker implements Action
     /**
      * @var ContainerBuilder
      */
-    protected $container;
+    private  $container;
+    /**
+     * @var Child[]
+     */
+    private  $processes = [];
+    /**
+     * @var array
+     */
+    private  $test = [];
+    private $col;
 
     /**
      * @param ContainerBuilder $container
@@ -22,6 +32,29 @@ class Worker implements Action
     public function __construct(ContainerBuilder $container)
     {
         $this->container = $container;
+        $conn = new \MongoClient();
+        $db = $conn->selectDB("qtest");
+        $this->col = $db->selectCollection("q");
+    }
+
+    public function addToQ(Url $url)
+    {
+        $this->col->insert([
+            'url'     =>  $url->toString(),
+            'st'      =>  1
+        ]);
+    }
+
+    public function getFromQ()
+    {
+        $res = $this->col->findAndModify(
+            ['st' => 1],
+            [],
+            ['url' => 1],
+            ['remove' => true, 'upsert' => false, 'new' => false]
+        );
+
+        return $res && isset($res['url']) ? new Url($res['url']) : "";
     }
 
     /**
@@ -40,6 +73,7 @@ class Worker implements Action
         return $this->getSite()->getUrl()->hostname();
     }
 
+
     /**
      * This is the action to be runned.
      *
@@ -50,30 +84,53 @@ class Worker implements Action
      */
     public function execute(Control $control, Context $context)
     {
+        $limit = 30;
+        $running = 0;
+        $worker = $this;
 
-        $site = $this->getSite();
-        $site->getQueue()->enqueue($site->getUrl(), $this->getChannelName());
+        $this->addToQ(new Url("http://ulkotours.com"));
 
-        while ($url = $site->getQueue()->dequeue($this->getChannelName())) {
+        do {
+           $url = $this->getFromQ();
 
-        }
-        /*$worker = $this;
+           if ($url) {
+               $childProcess = new Child(new Callback(function (Control $control, Context $context) use($url, $worker) {
+                    $page = $worker->getSite()->getPage($url);
 
-        while(true) {
-            $child = new Child(
-                new Callback(
-                    function (Control $control) use($worker) {
-                        echo "Child process is " .$control->info()->getId().PHP_EOL;
+                    echo "Page {$page->url()} \n";
+
+                    if (!$page->isEmpty()) {
+                        foreach ($page->links() as $link) {
+                            $worker->addToQ($link);
+                        }
                     }
-                ),
-                $control
-            );
 
-            $child->start();
-            $child->wait();
+               }), $control);
 
-            sleep(mt_rand(1,10));
-        }*/
+               $childProcess->start();
+               array_push($this->processes, $childProcess);
+               $running++;
+           } else {
+              sleep(2);
+              $running++;
+           }
+
+           if ($running == $limit) {
+                $test = true;
+                while($test && count($this->processes) > 0) {
+                    foreach ($this->processes as $v => $p) {
+                        if (!$p->isRunning()) {
+                            $running--;
+                            unset($this->processes[$v]);
+                            $test = false;
+                        } else {
+                            $p->wait();
+                        }
+                    }
+                }
+           }
+
+        } while ($running < $limit);
     }
 
     /**

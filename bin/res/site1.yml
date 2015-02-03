@@ -12,7 +12,7 @@ services:
    queue:
       class: Madfox\WebCrawler\Queue\Queue
       factory: ["@queue_factory", create]
-      arguments: ["Memory", [1,2,3]]
+      arguments: ["Memory", []]
 
    indexer:
       class: Madfox\WebCrawler\Indexer\Indexer
